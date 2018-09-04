@@ -39,7 +39,7 @@ int Execute::bkpt(uint32_t im)
 
     stats->print();
     printf("Hit breakpoint with value %" PRIu32 ". Terminating...\n", im);
-    exit(im);
+    return 0;
 }
 
 int Execute::nop()
@@ -60,7 +60,7 @@ int Execute::svc(uint32_t im)
 
     fprintf(stderr, "Reached SVC (im %" PRIu32 ") instruction\n", im);
     DEBUG_CMD(DEBUG_MEMORY, mem->dump());
-    exit(im);
+    return 0;
 }
 
 /* Repurpose this instruction for printing a character in register r0 */

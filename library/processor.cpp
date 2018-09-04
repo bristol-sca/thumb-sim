@@ -64,7 +64,11 @@ int Processor::simulateCycle()
 {
     stats->addCycle();
 
-    execute->run();
+    if (-1 == execute->run()) // if hit breakpoint
+    {
+        return -1;
+    }
+
     decode->run();
     fetch->run();
 

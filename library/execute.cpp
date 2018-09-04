@@ -441,7 +441,10 @@ int Execute::run()
     switch (execState)
     {
         case ExecuteState::NEXT_INST:
-            executeNextInst();
+            if (-1 == executeNextInst()) // if hit breakpoint
+            {
+                return -1; // Exit the program
+            }
             break;
 
         /* States for load */
@@ -861,10 +864,12 @@ int Execute::executeNextInst()
         /* Other instructions */
         case DecodedOperation::BKPT:
             bkpt(im);
+            return -1; // Exit the program
             break;
 
         case DecodedOperation::SVC:
             svc(im);
+            return -1; // Exit the program
             break;
 
         case DecodedOperation::CPS:
