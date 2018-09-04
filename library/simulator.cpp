@@ -36,7 +36,7 @@
 class CmdLineArgs
 {
 public:
-    char *bin{ nullptr };
+    std::string bin;
     uint32_t memSizeWords{ MEM_SIZE_WORDS };
     uint32_t memAccessWidthWords{ MEM_ACCESS_WIDTH_WORDS };
 
@@ -51,12 +51,12 @@ public:
         "  -h    Prints this help message\n";
 };
 
-int Simulator::run(char *programBinFile)
+int Simulator::run(const std::string &programBinFile)
 {
     return run(programBinFile, MEM_SIZE_WORDS, MEM_ACCESS_WIDTH_WORDS);
 }
 
-int Simulator::run(char *programBinFile,
+int Simulator::run(const std::string &programBinFile,
                    uint32_t memSizeWordsIn,
                    uint32_t memAccessWidthWordsIn)
 {
@@ -168,7 +168,7 @@ int main(int argc, char **argv)
         printf("%s%c", argv[i], (i + 1 == argc) ? '\n' : ' ');
     }
 
-    if (args.bin == nullptr)
+    if (args.bin.empty())
     {
         fprintf(stderr, "A program binary is needed to run the simulator\n");
         return EXIT_FAILURE;

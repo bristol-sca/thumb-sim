@@ -66,7 +66,7 @@ public:
     ~Memory();
 
     /* Functions for booting */
-    int loadProgram(char *programFile,
+    int loadProgram(const std::string &programFile,
                     uint32_t &pc,
                     uint32_t &programByteSize);
 

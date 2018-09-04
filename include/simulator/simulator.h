@@ -31,8 +31,8 @@
 class Simulator
 {
 public:
-    int run(char *programBinFile);
-    int run(char *programBinFile,
+    int run(const std::string &programBinFile);
+    int run(const std::string &programBinFile,
             uint32_t memSizeWordsIn,
             uint32_t memAccessWidthWordsIn);
 

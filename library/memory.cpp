@@ -87,7 +87,7 @@ Memory::~Memory()
     delete pipeline;
 }
 
-int Memory::loadProgram(char *programFile,
+int Memory::loadProgram(const std::string &programFile,
                         uint32_t &pc,
                         uint32_t &programByteSize)
 {
@@ -99,7 +99,7 @@ int Memory::loadProgram(char *programFile,
 
     if (!inBin.is_open())
     {
-        fprintf(stderr, "Could not open '%s'\n", programFile);
+        fprintf(stderr, "Could not open '%s'\n", programFile.c_str());
         return ret;
     }
 

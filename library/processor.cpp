@@ -79,7 +79,7 @@ int Processor::simulateCycle()
     return 0;
 }
 
-int Processor::reset(char *programBinFile)
+int Processor::reset(const std::string &programBinFile)
 {
     int ret;
     uint32_t pcAddr;
