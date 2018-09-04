@@ -37,46 +37,46 @@ bool Execute::checkCondition(DecodedCondition cond, uint32_t xpsr)
     switch (cond)
     {
         case DecodedCondition::EQ:
-            return (z == 0x1) ? true : false;
+            return z == 0x1;
 
         case DecodedCondition::NE:
-            return (z == 0x0) ? true : false;
+            return z == 0x0;
 
         case DecodedCondition::CS:
-            return (c == 0x1) ? true : false;
+            return c == 0x1;
 
         case DecodedCondition::CC:
-            return (c == 0x0) ? true : false;
+            return c == 0x0;
 
         case DecodedCondition::MI:
-            return (n == 0x1) ? true : false;
+            return n == 0x1;
 
         case DecodedCondition::PL:
-            return (n == 0x0) ? true : false;
+            return n == 0x0;
 
         case DecodedCondition::VS:
-            return (v == 0x1) ? true : false;
+            return v == 0x1;
 
         case DecodedCondition::VC:
-            return (v == 0x0) ? true : false;
+            return v == 0x0;
 
         case DecodedCondition::HI:
-            return ((c == 0x1) && (z == 0x0)) ? true : false;
+            return (c == 0x1) && (z == 0x0);
 
         case DecodedCondition::LS:
-            return ((c == 0x0) || (z == 0x1)) ? true : false;
+            return (c == 0x0) || (z == 0x1);
 
         case DecodedCondition::GE:
-            return (n == v) ? true : false;
+            return n == v;
 
         case DecodedCondition::LT:
-            return (n != v) ? true : false;
+            return n != v;
 
         case DecodedCondition::GT:
-            return ((z == 0x0) && (n == v)) ? true : false;
+            return (z == 0x0) && (n == v);
 
         case DecodedCondition::LE:
-            return ((z == 0x1) || (n != v)) ? true : false;
+            return (z == 0x1) || (n != v);
 
         default:
             fprintf(stderr, "Invalid condition\n");

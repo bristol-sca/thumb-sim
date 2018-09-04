@@ -63,15 +63,7 @@ bool Execute::isStalled()
      * stalled because of the execute stage (e.g. there is a multi-cycle
      * instruction)
      */
-
-    if (execState == ExecuteState::NEXT_INST && decodedInst == nullptr)
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
+    return (execState != ExecuteState::NEXT_INST || decodedInst != nullptr);
 }
 
 int Execute::executeMultipleStoreFirstMemReq()
