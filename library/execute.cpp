@@ -480,6 +480,14 @@ int Execute::run()
             break;
     }
 
+    // If an instruction takes multiple cycles, currently we only
+    // duplicate the previous instruction as this is all the ELMO model does.
+    // TODO: Improve this?
+    if (const auto &execute = Simulator_Debug::Debug::Get_Execute();
+        execute.size() < Simulator_Debug::Debug::Get_Cycle_Count())
+    {
+        Simulator_Debug::Debug::Add_Execute(execute.back());
+    }
     calculateExecCycles();
 
     DEBUG_CMD(DEBUG_EXECUTE,
@@ -584,6 +592,7 @@ int Execute::executeNextInst()
     cflag = RegFile::getXpsrC(dxpsr);
 
     DEBUG_CMD(DEBUG_EXECUTE, printf("Execute:"));
+    Simulator_Debug::Debug::Add_Execute(decodedInst->getDisassembly());
 
     /* Execute the decoded instruction */
     switch (decodedInst->getOperation())
