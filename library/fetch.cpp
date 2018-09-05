@@ -144,6 +144,7 @@ int Fetch::run()
             issuedMemAccess = false;
 
             DEBUG_CMD(DEBUG_FETCH, print());
+            Simulator_Debug::Debug::Add_Fetch(instBuffer[0], instBuffer[1]);
         }
         else
         {
@@ -197,6 +198,12 @@ int Fetch::run()
 
             DEBUG_CMD(DEBUG_FETCH,
                       printf("Fetch: requested from pc %08" PRIX32 "\n", pc));
+            if (Simulator_Debug::Debug::Get_Fetch().size() <
+                Simulator_Debug::Debug::Get_Cycle_Count())
+            {
+                Simulator_Debug::Debug::Add_Fetch(
+                    1, 1); // equivalent to requested from pc
+            }
         }
         else
         {
@@ -210,6 +217,11 @@ int Fetch::run()
     else
     {
         DEBUG_CMD(DEBUG_FETCH, printf("Fetch: stalled\n"));
+        if (Simulator_Debug::Debug::Get_Fetch().size() <
+            Simulator_Debug::Debug::Get_Cycle_Count())
+        {
+            Simulator_Debug::Debug::Add_Fetch(0, 1); // equivalent to stalled
+        }
     }
 
     return 0;
