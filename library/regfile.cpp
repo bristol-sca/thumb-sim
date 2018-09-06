@@ -25,6 +25,8 @@
 
 #include "simulator/utils.h"
 
+#include "simulator/debug.h"
+
 #include <cinttypes>
 #include <cstdint>
 #include <cstdio>
@@ -240,4 +242,5 @@ void RegFile::print(Reg reg)
            prefix.c_str(),
            regToStr(reg).c_str(),
            regs[r]);
+    Simulator_Debug::Debug::Add_Register(regToStr(reg), regs[r]);
 }

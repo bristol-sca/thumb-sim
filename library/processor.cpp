@@ -75,6 +75,7 @@ int Processor::simulateCycle()
     mem->run();
 
     DEBUG_CMD(DEBUG_REGFILE, regFile->print());
+    regFile->print();
 
     return 0;
 }
