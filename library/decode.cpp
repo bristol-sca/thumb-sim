@@ -30,6 +30,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <sstream>
 #include <string>
 
 Decode::Decode(Fetch *fetchInit, RegFile *regFileInit) :
@@ -162,6 +163,7 @@ int Decode::run()
         flushPending = false;
 
         DEBUG_CMD(DEBUG_DECODE, printf("Decode: flushing\n"));
+        Simulator_Debug::Debug::Add_Decode("Flushing");
 
         return 0;
     }
@@ -173,6 +175,7 @@ int Decode::run()
         /* The previously decoded instruction has not been processed yet */
         DEBUG_CMD(DEBUG_DECODE,
                   printf("Decode: stalled, pending execution\n"));
+        Simulator_Debug::Debug::Add_Decode("Stalled, pending execution");
 
         return 0;
     }
@@ -185,6 +188,7 @@ int Decode::run()
     {
         /* Stall as fetch could not provide the following instruction */
         DEBUG_CMD(DEBUG_DECODE, printf("Decode: stalled, pending fetch\n"));
+        Simulator_Debug::Debug::Add_Decode("Stalled, pending fetch");
 
         return 0;
     }
@@ -221,17 +225,21 @@ int Decode::run()
 
             decodedInst->setImmediate(im32);
 
-            DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+            const std::string disassembly = decodedInst->getDisassembly();
+            DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+            Simulator_Debug::Debug::Add_Decode(disassembly);
             return 0;
         }
 
         issuePlaceholderInst();
 
+        const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE,
                   printf("Unable to decode second half %04" PRIX16
                          ", issuing: ",
                          inst);
-                  decodedInst->printDisassembly());
+                  printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
 
         return 0;
     }
@@ -253,7 +261,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
         decodedInst->setRegister(DecodedInstRegIndex::XPSR, Reg::XPSR, xpsr);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -271,7 +281,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, rb);
         decodedInst->setImmediate(im3);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -287,7 +299,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RDN, rdn, ra);
         decodedInst->setImmediate(im8);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -306,7 +320,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -325,11 +341,13 @@ int Decode::run()
             /* Unpredictable ADD4 operation, rdn == rm == pc */
             issuePlaceholderInst();
 
+            const std::string disassembly = decodedInst->getDisassembly();
             DEBUG_CMD(DEBUG_DECODE,
                       printf("Unpredictable ADD4 operation rdn == rm == pc "
                              "(0x%04" PRIX16 "), issuing: ",
                              inst);
-                      decodedInst->printDisassembly());
+                      printf("%s\n", disassembly.c_str()));
+            Simulator_Debug::Debug::Add_Decode(disassembly);
 
             return 0;
         }
@@ -343,7 +361,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RDN, rdn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -358,7 +378,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RM, Reg::PC, pc);
         decodedInst->setImmediate(im8);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -375,7 +397,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RM, activeSp, rb);
         decodedInst->setImmediate(im8);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -391,7 +415,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RM, activeSp, rb);
         decodedInst->setImmediate(im7);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -408,7 +434,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RDN, rdn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -426,7 +454,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
         decodedInst->setImmediate(im5);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -443,7 +473,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RDN, rdn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -458,12 +490,14 @@ int Decode::run()
             /* Branch with undefined condition flags */
             issuePlaceholderInst();
 
+            const std::string disassembly = decodedInst->getDisassembly();
             DEBUG_CMD(
                 DEBUG_DECODE,
                 printf("Branch with undefined condition flags (0x%04" PRIX16
                        "), issuing: ",
                        inst);
-                decodedInst->printDisassembly());
+                printf("%s\n", disassembly.c_str()));
+            Simulator_Debug::Debug::Add_Decode(disassembly);
 
             return 0;
         }
@@ -478,7 +512,9 @@ int Decode::run()
             decodedInst->setImmediate(im8);
             decodedInst->setCondition(cond);
 
-            DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+            const std::string disassembly = decodedInst->getDisassembly();
+            DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+            Simulator_Debug::Debug::Add_Decode(disassembly);
             return 0;
         }
 
@@ -494,7 +530,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RM, Reg::PC, pc);
         decodedInst->setImmediate(im11);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -511,7 +549,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RDN, rdn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -523,7 +563,9 @@ int Decode::run()
         decodedInst->setOperation(DecodedOperation::BKPT);
         decodedInst->setImmediate(im8);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -541,7 +583,11 @@ int Decode::run()
 
         decodedHalfInst = true;
 
-        DEBUG_CMD(DEBUG_DECODE, printf("bl first half\n"));
+        const std::string disassembly = decodedInst->getDisassembly();
+        // TODO: This used to read "bl first half" but original ELMO leakage
+        // model simply duplicates instructions that take more than one cycle.
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -555,12 +601,14 @@ int Decode::run()
             /* BLX cannot have PC as operand register */
             issuePlaceholderInst();
 
+            const std::string disassembly = decodedInst->getDisassembly();
             DEBUG_CMD(
                 DEBUG_DECODE,
                 printf("BLX cannot have pc as operand register (0x%04" PRIX16
                        "), issuing: ",
                        inst);
-                decodedInst->printDisassembly());
+                printf("%s\n", disassembly.c_str()));
+            Simulator_Debug::Debug::Add_Decode(disassembly);
 
             return 0;
         }
@@ -571,7 +619,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RDN, Reg::PC, pc);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -587,7 +637,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RDN, Reg::PC, pc);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -604,7 +656,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -620,7 +674,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, ra);
         decodedInst->setImmediate(im8);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -637,7 +693,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -653,11 +711,13 @@ int Decode::run()
             /* Unpredictable CMP3 operation with two low registers */
             issuePlaceholderInst();
 
+            const std::string disassembly = decodedInst->getDisassembly();
             DEBUG_CMD(DEBUG_DECODE,
                       printf("Unpredictable CMP3 operation with two low "
                              "registers (0x%04" PRIX16 "), issuing: ",
                              inst);
-                      decodedInst->printDisassembly());
+                      printf("%s\n", disassembly.c_str()));
+            Simulator_Debug::Debug::Add_Decode(disassembly);
 
             return 0;
         }
@@ -667,11 +727,13 @@ int Decode::run()
             /* Unpredictable CMP3 operation with pc operand */
             issuePlaceholderInst();
 
+            const std::string disassembly = decodedInst->getDisassembly();
             DEBUG_CMD(DEBUG_DECODE,
                       printf("Unpredictable CMP3 operation with pc operand "
                              "(0x%04" PRIX16 "), issuing: ",
                              inst);
-                      decodedInst->printDisassembly());
+                      printf("%s\n", disassembly.c_str()));
+            Simulator_Debug::Debug::Add_Decode(disassembly);
 
             return 0;
         }
@@ -683,7 +745,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -698,7 +762,9 @@ int Decode::run()
         decodedInst->setOperation(DecodedOperation::CPS);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -716,7 +782,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RD, rd, 0);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -733,7 +801,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RDN, rdn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -748,11 +818,13 @@ int Decode::run()
             /* Unpredictable LDMIA with 0 length register list */
             issuePlaceholderInst();
 
+            const std::string disassembly = decodedInst->getDisassembly();
             DEBUG_CMD(DEBUG_DECODE,
                       printf("Unpredictable LDMIA with 0 length register list "
                              "(0x%04" PRIX16 "), issuing: ",
                              inst);
-                      decodedInst->printDisassembly());
+                      printf("%s\n", disassembly.c_str()));
+            Simulator_Debug::Debug::Add_Decode(disassembly);
 
             return 0;
         }
@@ -763,7 +835,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, ra);
         decodedInst->setRegisterList(rl);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -781,7 +855,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, rb);
         decodedInst->setImmediate(im5);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -800,7 +876,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -815,7 +893,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, Reg::PC, pc);
         decodedInst->setImmediate(im8);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -832,7 +912,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, activeSp, rb);
         decodedInst->setImmediate(im8);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -850,7 +932,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, rb);
         decodedInst->setImmediate(im5);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -869,7 +953,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -887,7 +973,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, rb);
         decodedInst->setImmediate(im5);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -906,7 +994,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -925,7 +1015,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -944,7 +1036,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -962,7 +1056,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
         decodedInst->setImmediate(im5);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -979,7 +1075,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RDN, rdn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -997,7 +1095,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
         decodedInst->setImmediate(im5);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1014,7 +1114,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RDN, rdn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1028,7 +1130,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RD, rd, 0);
         decodedInst->setImmediate(im8);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1044,7 +1148,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RD, rd, 0);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1061,7 +1167,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RDN, rdn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1077,7 +1185,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RD, rd, 0);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1096,7 +1206,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, rb);
         decodedInst->setImmediate(0);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1105,7 +1217,9 @@ int Decode::run()
     {
         decodedInst->setOperation(DecodedOperation::NOP);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1122,7 +1236,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RDN, rdn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1137,11 +1253,13 @@ int Decode::run()
             /* Unpredictable POP with 0 length register list */
             issuePlaceholderInst();
 
+            const std::string disassembly = decodedInst->getDisassembly();
             DEBUG_CMD(DEBUG_DECODE,
                       printf("Unpredictable POP with 0 length register list "
                              "(0x%04" PRIX16 "), issuing: ",
                              inst);
-                      decodedInst->printDisassembly());
+                      printf("%s\n", disassembly.c_str()));
+            Simulator_Debug::Debug::Add_Decode(disassembly);
 
             return 0;
         }
@@ -1152,7 +1270,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, activeSp, ra);
         decodedInst->setRegisterList(rl);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1167,11 +1287,13 @@ int Decode::run()
             /* Unpredictable PUSH with 0 length register list */
             issuePlaceholderInst();
 
+            const std::string disassembly = decodedInst->getDisassembly();
             DEBUG_CMD(DEBUG_DECODE,
                       printf("Unpredictable PUSH with 0 length register list "
                              "(0x%04" PRIX16 "), issuing: ",
                              inst);
-                      decodedInst->printDisassembly());
+                      printf("%s\n", disassembly.c_str()));
+            Simulator_Debug::Debug::Add_Decode(disassembly);
 
             return 0;
         }
@@ -1182,7 +1304,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, activeSp, ra);
         decodedInst->setRegisterList(rl);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1198,7 +1322,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RD, rd, 0);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1214,7 +1340,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RD, rd, 0);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1230,7 +1358,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RD, rd, 0);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1247,7 +1377,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RDN, rdn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1266,7 +1398,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
         decodedInst->setRegister(DecodedInstRegIndex::XPSR, Reg::XPSR, xpsr);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1288,11 +1422,13 @@ int Decode::run()
             /* Unpredictable STMIA with 0 length register list */
             issuePlaceholderInst();
 
+            const std::string disassembly = decodedInst->getDisassembly();
             DEBUG_CMD(DEBUG_DECODE,
                       printf("Unpredictable STMIA with 0 length register list "
                              "(0x%04" PRIX16 "), issuing: ",
                              inst);
-                      decodedInst->printDisassembly());
+                      printf("%s\n", disassembly.c_str()));
+            Simulator_Debug::Debug::Add_Decode(disassembly);
 
             return 0;
         }
@@ -1303,7 +1439,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, ra);
         decodedInst->setRegisterList(rl);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1322,7 +1460,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, rb);
         decodedInst->setImmediate(im5);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1342,7 +1482,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1360,7 +1502,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, activeSp, rb);
         decodedInst->setImmediate(im8);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1379,7 +1523,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, rb);
         decodedInst->setImmediate(im5);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1399,7 +1545,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1418,7 +1566,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, rb);
         decodedInst->setImmediate(im5);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1438,7 +1588,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1456,7 +1608,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, rb);
         decodedInst->setImmediate(im3);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1472,7 +1626,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RDN, rdn, ra);
         decodedInst->setImmediate(im8);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1491,7 +1647,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1506,7 +1664,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RDN, activeSp, ra);
         decodedInst->setImmediate(im7);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1518,7 +1678,9 @@ int Decode::run()
         decodedInst->setOperation(DecodedOperation::SVC);
         decodedInst->setImmediate(im8);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1534,7 +1696,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RD, rd, 0);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1550,7 +1714,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RD, rd, 0);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1567,7 +1733,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RN, rn, ra);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1583,7 +1751,9 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RD, rd, 0);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
@@ -1599,16 +1769,20 @@ int Decode::run()
         decodedInst->setRegister(DecodedInstRegIndex::RD, rd, 0);
         decodedInst->setRegister(DecodedInstRegIndex::RM, rm, rb);
 
-        DEBUG_CMD(DEBUG_DECODE, decodedInst->printDisassembly());
+        const std::string disassembly = decodedInst->getDisassembly();
+        DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
+        Simulator_Debug::Debug::Add_Decode(disassembly);
         return 0;
     }
 
     issuePlaceholderInst();
 
+    const std::string disassembly = decodedInst->getDisassembly();
     DEBUG_CMD(
         DEBUG_DECODE,
         printf("Unable to decode instruction %04" PRIX16 ", issuing: ", inst);
-        decodedInst->printDisassembly());
+        printf("%s\n", disassembly.c_str()));
+    Simulator_Debug::Debug::Add_Decode(disassembly);
 
     return 0;
 }
@@ -1695,7 +1869,7 @@ void DecodedInst::setCondition(uint32_t condIn)
     cond = static_cast<DecodedCondition>(condIn);
 }
 
-void DecodedInst::printDisassembly()
+const std::string DecodedInst::getDisassembly() const
 {
     uint32_t i;
     std::string rd = RegFile::regToStr(
@@ -1712,110 +1886,141 @@ void DecodedInst::printDisassembly()
         regsNumber[static_cast<uint32_t>(DecodedInstRegIndex::XPSR)]);
     bool comma = false;
 
+    char instruction[100];
+
     switch (op)
     {
         case DecodedOperation::ADC:
-            printf("adc %s, %s\n", rdn.c_str(), rm.c_str());
+            sprintf(instruction, "adc %s, %s", rdn.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::ADD1:
-            printf("adds %s, %s, #%" PRIu32 "\n", rd.c_str(), rn.c_str(), im);
+            sprintf(instruction,
+                    "adds %s, %s, #%" PRIu32 "",
+                    rd.c_str(),
+                    rn.c_str(),
+                    im);
             break;
 
         case DecodedOperation::ADD2:
-            printf("adds %s, #%" PRIu32 "\n", rdn.c_str(), im);
+            sprintf(instruction, "adds %s, #%" PRIu32 "", rdn.c_str(), im);
             break;
 
         case DecodedOperation::ADD3:
-            printf("adds %s, %s, %s\n", rd.c_str(), rn.c_str(), rm.c_str());
+            sprintf(instruction,
+                    "adds %s, %s, %s",
+                    rd.c_str(),
+                    rn.c_str(),
+                    rm.c_str());
             break;
 
         case DecodedOperation::ADD4:
-            printf("add %s, %s\n", rdn.c_str(), rm.c_str());
+            sprintf(instruction, "add %s, %s", rdn.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::ADD5:
-            printf("add %s, %s, #%" PRIu32 "\n", rd.c_str(), rm.c_str(), im);
+            sprintf(instruction,
+                    "add %s, %s, #%" PRIu32 "",
+                    rd.c_str(),
+                    rm.c_str(),
+                    im);
             break;
 
         case DecodedOperation::ADD6:
-            printf("add %s, %s, #%" PRIu32 "\n", rd.c_str(), rm.c_str(), im);
+            sprintf(instruction,
+                    "add %s, %s, #%" PRIu32 "",
+                    rd.c_str(),
+                    rm.c_str(),
+                    im);
             break;
 
         case DecodedOperation::ADD7:
-            printf("add %s, %s, #%" PRIu32 "\n", rd.c_str(), rm.c_str(), im);
+            sprintf(instruction,
+                    "add %s, %s, #%" PRIu32 "",
+                    rd.c_str(),
+                    rm.c_str(),
+                    im);
             break;
 
         case DecodedOperation::AND:
-            printf("ands %s, %s\n", rdn.c_str(), rm.c_str());
+            sprintf(instruction, "ands %s, %s", rdn.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::ASR1:
-            printf("asrs %s, %s, #%" PRIu32 "\n", rd.c_str(), rm.c_str(), im);
+            sprintf(instruction,
+                    "asrs %s, %s, #%" PRIu32 "",
+                    rd.c_str(),
+                    rm.c_str(),
+                    im);
             break;
 
         case DecodedOperation::ASR2:
-            printf("asrs %s, %s\n", rdn.c_str(), rm.c_str());
+            sprintf(instruction, "asrs %s, %s", rdn.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::B1:
-            printf("b%s #%" PRIu32 "\n", getConditionString(cond).c_str(), im);
+            sprintf(instruction,
+                    "b%s #%" PRIu32 "",
+                    getConditionString(cond).c_str(),
+                    im);
             break;
 
         case DecodedOperation::B2:
-            printf("b #%" PRIu32 "\n", im);
+            sprintf(instruction, "b #%" PRIu32 "", im);
             break;
 
         case DecodedOperation::BIC:
-            printf("bics %s, %s\n", rdn.c_str(), rm.c_str());
+            sprintf(instruction, "bics %s, %s", rdn.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::BKPT:
-            printf("bkpt %" PRIu32 "\n", im);
+            sprintf(instruction, "bkpt %" PRIu32 "", im);
             break;
 
         case DecodedOperation::BL:
-            printf("bl %" PRIu32 "\n", im);
+            sprintf(instruction, "bl %" PRIu32 "", im);
             break;
 
         case DecodedOperation::BLX:
-            printf("blx %s\n", rm.c_str());
+            sprintf(instruction, "blx %s", rm.c_str());
             break;
 
         case DecodedOperation::BX:
-            printf("bx %s\n", rm.c_str());
+            sprintf(instruction, "bx %s", rm.c_str());
             break;
 
         case DecodedOperation::CMN:
-            printf("cmns %s, %s\n", rn.c_str(), rm.c_str());
+            sprintf(instruction, "cmns %s, %s", rn.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::CMP1:
-            printf("cmp %s,#%" PRIu32 "\n", rn.c_str(), im);
+            sprintf(instruction, "cmp %s,#%" PRIu32 "", rn.c_str(), im);
             break;
 
         case DecodedOperation::CMP2:
-            printf("cmps %s, %s\n", rn.c_str(), rm.c_str());
+            sprintf(instruction, "cmps %s, %s", rn.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::CMP3:
-            printf("cmps %s, %s\n", rn.c_str(), rm.c_str());
+            sprintf(instruction, "cmps %s, %s", rn.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::CPS:
-            printf("cps\n");
+            sprintf(instruction, "cps");
             break;
 
         case DecodedOperation::CPY:
-            printf("cpy %s, %s\n", rd.c_str(), rm.c_str());
+            sprintf(instruction, "cpy %s, %s", rd.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::EOR:
-            printf("eors %s, %s\n", rdn.c_str(), rm.c_str());
+            sprintf(instruction, "eors %s, %s", rdn.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::LDMIA:
-            printf("ldmia %s" PRIu32 " {", rn.c_str());
+        {
+            std::stringstream temp_instrution;
+            temp_instrution << "ldmia " << rn << " {";
             for (i = 0; i < REGFILE_CORE_REGS_COUNT; i++)
             {
                 if (((regList >> i) & 0x1) == 0)
@@ -1823,105 +2028,155 @@ void DecodedInst::printDisassembly()
 
                 if (comma)
                 {
-                    printf(", ");
+                    temp_instrution << ", ";
                 }
                 else
                 {
                     comma = true;
                 }
-                printf("r%" PRIu32, i);
+                temp_instrution << 'r' << i;
             }
-            printf("}\n");
+            temp_instrution << '}';
+            sprintf(instruction, "%s", temp_instrution.str().c_str());
             break;
+        }
 
         case DecodedOperation::LDR1:
-            printf("ldr %s, [%s, #%" PRIu32 "]\n", rt.c_str(), rn.c_str(), im);
+            sprintf(instruction,
+                    "ldr %s, [%s, #%" PRIu32 "]",
+                    rt.c_str(),
+                    rn.c_str(),
+                    im);
             break;
 
         case DecodedOperation::LDR2:
-            printf("ldr %s, [%s, %s]\n", rt.c_str(), rn.c_str(), rm.c_str());
+            sprintf(instruction,
+                    "ldr %s, [%s, %s]",
+                    rt.c_str(),
+                    rn.c_str(),
+                    rm.c_str());
             break;
 
         case DecodedOperation::LDR3:
-            printf("ldr %s, [%s, #%" PRIu32 "]\n", rt.c_str(), rn.c_str(), im);
+            sprintf(instruction,
+                    "ldr %s, [%s, #%" PRIu32 "]",
+                    rt.c_str(),
+                    rn.c_str(),
+                    im);
             break;
 
         case DecodedOperation::LDR4:
-            printf("ldr %s, [%s, #%" PRIu32 "]\n", rt.c_str(), rn.c_str(), im);
+            sprintf(instruction,
+                    "ldr %s, [%s, #%" PRIu32 "]",
+                    rt.c_str(),
+                    rn.c_str(),
+                    im);
             break;
 
         case DecodedOperation::LDRB1:
-            printf(
-                "ldrb %s, [%s, #%" PRIu32 "]\n", rt.c_str(), rn.c_str(), im);
+            sprintf(instruction,
+                    "ldrb %s, [%s, #%" PRIu32 "]",
+                    rt.c_str(),
+                    rn.c_str(),
+                    im);
             break;
 
         case DecodedOperation::LDRB2:
-            printf("ldrb %s, [%s, %s]\n", rt.c_str(), rn.c_str(), rm.c_str());
+            sprintf(instruction,
+                    "ldrb %s, [%s, %s]",
+                    rt.c_str(),
+                    rn.c_str(),
+                    rm.c_str());
             break;
 
         case DecodedOperation::LDRH1:
-            printf(
-                "ldrh %s, [%s, #%" PRIu32 "]\n", rt.c_str(), rn.c_str(), im);
+            sprintf(instruction,
+                    "ldrh %s, [%s, #%" PRIu32 "]",
+                    rt.c_str(),
+                    rn.c_str(),
+                    im);
             break;
 
         case DecodedOperation::LDRH2:
-            printf("ldrh %s, [%s, %s]\n", rt.c_str(), rn.c_str(), rm.c_str());
+            sprintf(instruction,
+                    "ldrh %s, [%s, %s]",
+                    rt.c_str(),
+                    rn.c_str(),
+                    rm.c_str());
             break;
 
         case DecodedOperation::LDRSB:
-            printf("ldrsb %s, [%s, %s]\n", rt.c_str(), rn.c_str(), rm.c_str());
+            sprintf(instruction,
+                    "ldrsb %s, [%s, %s]",
+                    rt.c_str(),
+                    rn.c_str(),
+                    rm.c_str());
             break;
 
         case DecodedOperation::LDRSH:
-            printf("ldrsh %s, [%s, %s]\n", rt.c_str(), rn.c_str(), rm.c_str());
+            sprintf(instruction,
+                    "ldrsh %s, [%s, %s]",
+                    rt.c_str(),
+                    rn.c_str(),
+                    rm.c_str());
             break;
 
         case DecodedOperation::LSL1:
-            printf("lsls %s, %s, #%" PRIu32 "\n", rd.c_str(), rm.c_str(), im);
+            sprintf(instruction,
+                    "lsls %s, %s, #%" PRIu32 "",
+                    rd.c_str(),
+                    rm.c_str(),
+                    im);
             break;
 
         case DecodedOperation::LSL2:
-            printf("lsls %s, %s\n", rdn.c_str(), rm.c_str());
+            sprintf(instruction, "lsls %s, %s", rdn.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::LSR1:
-            printf("lsrs %s, %s, #%" PRIu32 "\n", rd.c_str(), rm.c_str(), im);
+            sprintf(instruction,
+                    "lsrs %s, %s, #%" PRIu32 "",
+                    rd.c_str(),
+                    rm.c_str(),
+                    im);
             break;
 
         case DecodedOperation::LSR2:
-            printf("lsrs %s, %s\n", rdn.c_str(), rm.c_str());
+            sprintf(instruction, "lsrs %s, %s", rdn.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::MOV1:
-            printf("movs %s, #%" PRIu32 "\n", rd.c_str(), im);
+            sprintf(instruction, "movs %s, #%" PRIu32 "", rd.c_str(), im);
             break;
 
         case DecodedOperation::MOV2:
-            printf("movs %s, %s\n", rd.c_str(), rm.c_str());
+            sprintf(instruction, "movs %s, %s", rd.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::MUL:
-            printf("muls %s, %s\n", rdn.c_str(), rn.c_str());
+            sprintf(instruction, "muls %s, %s", rdn.c_str(), rn.c_str());
             break;
 
         case DecodedOperation::MVN:
-            printf("mvns %s, %s\n", rd.c_str(), rm.c_str());
+            sprintf(instruction, "mvns %s, %s", rd.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::NEG:
-            printf("negs %s, %s\n", rd.c_str(), rn.c_str());
+            sprintf(instruction, "negs %s, %s", rd.c_str(), rn.c_str());
             break;
 
         case DecodedOperation::NOP:
-            printf("nop\n");
+            sprintf(instruction, "nop");
             break;
 
         case DecodedOperation::ORR:
-            printf("orrs %s, %s\n", rdn.c_str(), rm.c_str());
+            sprintf(instruction, "orrs %s, %s", rdn.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::POP:
-            printf("pop {");
+        {
+            std::stringstream temp_instrution;
+            temp_instrution << "pop {";
             for (i = 0; i < REGFILE_CORE_REGS_COUNT; i++)
             {
                 if (((regList >> i) & 0x1) == 0)
@@ -1929,19 +2184,23 @@ void DecodedInst::printDisassembly()
 
                 if (comma)
                 {
-                    printf(", ");
+                    temp_instrution << ", ";
                 }
                 else
                 {
                     comma = true;
                 }
-                printf("r%" PRIu32, i);
+                temp_instrution << 'r' << i;
             }
-            printf("}\n");
+            temp_instrution << '}';
+            sprintf(instruction, "%s", temp_instrution.str().c_str());
             break;
+        }
 
         case DecodedOperation::PUSH:
-            printf("push {");
+        {
+            std::stringstream temp_instrution;
+            temp_instrution << "push {";
             for (i = 0; i < REGFILE_CORE_REGS_COUNT; i++)
             {
                 if (((regList >> i) & 0x1) == 0)
@@ -1949,39 +2208,43 @@ void DecodedInst::printDisassembly()
 
                 if (comma)
                 {
-                    printf(", ");
+                    temp_instrution << ", ";
                 }
                 else
                 {
                     comma = true;
                 }
-                printf("r%" PRIu32, i);
+                temp_instrution << 'r' << i;
             }
-            printf("}\n");
+            temp_instrution << '}';
+            sprintf(instruction, "%s", temp_instrution.str().c_str());
             break;
+        }
 
         case DecodedOperation::REV:
-            printf("rev %s, %s\n", rd.c_str(), rm.c_str());
+            sprintf(instruction, "rev %s, %s", rd.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::REV16:
-            printf("rev16 %s, %s\n", rd.c_str(), rm.c_str());
+            sprintf(instruction, "rev16 %s, %s", rd.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::REVSH:
-            printf("revsh %s, %s\n", rd.c_str(), rm.c_str());
+            sprintf(instruction, "revsh %s, %s", rd.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::ROR:
-            printf("ror %s, %s\n", rdn.c_str(), rm.c_str());
+            sprintf(instruction, "ror %s, %s", rdn.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::SBC:
-            printf("sbc %s, %s\n", rdn.c_str(), rm.c_str());
+            sprintf(instruction, "sbc %s, %s", rdn.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::STMIA:
-            printf("stmia %s {", rn.c_str());
+        {
+            std::stringstream temp_instrution;
+            temp_instrution << "stmia " << rn << "{";
             for (i = 0; i < REGFILE_CORE_REGS_COUNT; i++)
             {
                 if (((regList >> i) & 0x1) == 0)
@@ -1989,91 +2252,128 @@ void DecodedInst::printDisassembly()
 
                 if (comma)
                 {
-                    printf(", ");
+                    temp_instrution << ", ";
                 }
                 else
                 {
                     comma = true;
                 }
-                printf("r%" PRIu32, i);
+                temp_instrution << 'r' << i;
             }
-            printf("}\n");
+            temp_instrution << '}';
+            sprintf(instruction, "%s", temp_instrution.str().c_str());
             break;
+        }
 
         case DecodedOperation::STR1:
-            printf("str %s, [%s, #%" PRIu32 "]\n", rt.c_str(), rn.c_str(), im);
+            sprintf(instruction,
+                    "str %s, [%s, #%" PRIu32 "]",
+                    rt.c_str(),
+                    rn.c_str(),
+                    im);
             break;
 
         case DecodedOperation::STR2:
-            printf("str %s, [%s, %s]\n", rt.c_str(), rn.c_str(), rm.c_str());
+            sprintf(instruction,
+                    "str %s, [%s, %s]",
+                    rt.c_str(),
+                    rn.c_str(),
+                    rm.c_str());
             break;
 
         case DecodedOperation::STR3:
-            printf("str %s, [%s, #%" PRIu32 "]\n", rt.c_str(), rn.c_str(), im);
+            sprintf(instruction,
+                    "str %s, [%s, #%" PRIu32 "]",
+                    rt.c_str(),
+                    rn.c_str(),
+                    im);
             break;
 
         case DecodedOperation::STRB1:
-            printf(
-                "strb %s, [%s, #%" PRIu32 "]\n", rt.c_str(), rn.c_str(), im);
+            sprintf(instruction,
+                    "strb %s, [%s, #%" PRIu32 "]",
+                    rt.c_str(),
+                    rn.c_str(),
+                    im);
             break;
 
         case DecodedOperation::STRB2:
-            printf("strb %s, [%s, %s]\n", rt.c_str(), rn.c_str(), rm.c_str());
+            sprintf(instruction,
+                    "strb %s, [%s, %s]",
+                    rt.c_str(),
+                    rn.c_str(),
+                    rm.c_str());
             break;
 
         case DecodedOperation::STRH1:
-            printf(
-                "strh %s, [%s, #%" PRIu32 "]\n", rt.c_str(), rn.c_str(), im);
+            sprintf(instruction,
+                    "strh %s, [%s, #%" PRIu32 "]",
+                    rt.c_str(),
+                    rn.c_str(),
+                    im);
             break;
 
         case DecodedOperation::STRH2:
-            printf("strh %s, [%s, %s]\n", rt.c_str(), rn.c_str(), rm.c_str());
+            sprintf(instruction,
+                    "strh %s, [%s, %s]",
+                    rt.c_str(),
+                    rn.c_str(),
+                    rm.c_str());
             break;
 
         case DecodedOperation::SUB1:
-            printf("subs %s, %s, #%" PRIu32 "\n", rd.c_str(), rn.c_str(), im);
+            sprintf(instruction,
+                    "subs %s, %s, #%" PRIu32 "",
+                    rd.c_str(),
+                    rn.c_str(),
+                    im);
             break;
 
         case DecodedOperation::SUB2:
-            printf("subs %s, #%" PRIu32 "\n", rdn.c_str(), im);
+            sprintf(instruction, "subs %s, #%" PRIu32 "", rdn.c_str(), im);
             break;
 
         case DecodedOperation::SUB3:
-            printf("subs %s, %s, %s\n", rd.c_str(), rn.c_str(), rm.c_str());
+            sprintf(instruction,
+                    "subs %s, %s, %s",
+                    rd.c_str(),
+                    rn.c_str(),
+                    rm.c_str());
             break;
 
         case DecodedOperation::SUB4:
-            printf("sub %s, #%" PRIu32 "\n", rdn.c_str(), im);
+            sprintf(instruction, "sub %s, #%" PRIu32 "", rdn.c_str(), im);
             break;
 
         case DecodedOperation::SVC:
-            printf("svc %" PRIu32 "\n", im);
+            sprintf(instruction, "svc %" PRIu32 "", im);
             break;
 
         case DecodedOperation::SXTB:
-            printf("sxtb %s, %s\n", rd.c_str(), rm.c_str());
+            sprintf(instruction, "sxtb %s, %s", rd.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::SXTH:
-            printf("sxth %s, %s\n", rd.c_str(), rm.c_str());
+            sprintf(instruction, "sxth %s, %s", rd.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::TST:
-            printf("tst %s, %s\n", rn.c_str(), rm.c_str());
+            sprintf(instruction, "tst %s, %s", rn.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::UXTB:
-            printf("uxtb %s, %s\n", rd.c_str(), rm.c_str());
+            sprintf(instruction, "uxtb %s, %s", rd.c_str(), rm.c_str());
             break;
 
         case DecodedOperation::UXTH:
-            printf("uxth %s, %s\n", rd.c_str(), rm.c_str());
+            sprintf(instruction, "uxth %s, %s", rd.c_str(), rm.c_str());
             break;
 
         default:
             fprintf(stderr, "Unrecognised instruction while disassembling\n");
             exit(1);
     }
+    return std::string(instruction);
 }
 
 std::string DecodedInst::getConditionString(DecodedCondition cond)

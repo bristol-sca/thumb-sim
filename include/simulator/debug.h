@@ -43,7 +43,6 @@
     if (((flags) & (DEBUG_MASK)) != 0) \
     {                                  \
         x;                             \
-        fflush(stdout);                \
     }
 #else
 #define DEBUG_CMD(flags, x)

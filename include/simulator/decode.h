@@ -156,7 +156,7 @@ public:
     uint32_t getRegisterList();
     void setCondition(uint32_t cond);
     DecodedCondition getCondition();
-    void printDisassembly();
+    const std::string getDisassembly() const;
 
     static std::string getConditionString(DecodedCondition cond);
 
