@@ -2020,7 +2020,7 @@ const std::string DecodedInst::getDisassembly() const
         case DecodedOperation::LDMIA:
         {
             std::stringstream temp_instrution;
-            temp_instrution << "ldmia " << rn << " {";
+            temp_instrution << "ldmia " << rn;
             for (i = 0; i < REGFILE_CORE_REGS_COUNT; i++)
             {
                 if (((regList >> i) & 0x1) == 0)
@@ -2036,14 +2036,13 @@ const std::string DecodedInst::getDisassembly() const
                 }
                 temp_instrution << 'r' << i;
             }
-            temp_instrution << '}';
             sprintf(instruction, "%s", temp_instrution.str().c_str());
             break;
         }
 
         case DecodedOperation::LDR1:
             sprintf(instruction,
-                    "ldr %s, [%s, #%" PRIu32 "]",
+                    "ldr %s, %s, #%" PRIu32,
                     rt.c_str(),
                     rn.c_str(),
                     im);
@@ -2051,7 +2050,7 @@ const std::string DecodedInst::getDisassembly() const
 
         case DecodedOperation::LDR2:
             sprintf(instruction,
-                    "ldr %s, [%s, %s]",
+                    "ldr %s, %s, %s",
                     rt.c_str(),
                     rn.c_str(),
                     rm.c_str());
@@ -2059,7 +2058,7 @@ const std::string DecodedInst::getDisassembly() const
 
         case DecodedOperation::LDR3:
             sprintf(instruction,
-                    "ldr %s, [%s, #%" PRIu32 "]",
+                    "ldr %s, %s, #%" PRIu32,
                     rt.c_str(),
                     rn.c_str(),
                     im);
@@ -2067,7 +2066,7 @@ const std::string DecodedInst::getDisassembly() const
 
         case DecodedOperation::LDR4:
             sprintf(instruction,
-                    "ldr %s, [%s, #%" PRIu32 "]",
+                    "ldr %s, %s, #%" PRIu32,
                     rt.c_str(),
                     rn.c_str(),
                     im);
@@ -2075,7 +2074,7 @@ const std::string DecodedInst::getDisassembly() const
 
         case DecodedOperation::LDRB1:
             sprintf(instruction,
-                    "ldrb %s, [%s, #%" PRIu32 "]",
+                    "ldrb %s, %s, #%" PRIu32,
                     rt.c_str(),
                     rn.c_str(),
                     im);
@@ -2083,7 +2082,7 @@ const std::string DecodedInst::getDisassembly() const
 
         case DecodedOperation::LDRB2:
             sprintf(instruction,
-                    "ldrb %s, [%s, %s]",
+                    "ldrb %s, %s, %s",
                     rt.c_str(),
                     rn.c_str(),
                     rm.c_str());
@@ -2091,7 +2090,7 @@ const std::string DecodedInst::getDisassembly() const
 
         case DecodedOperation::LDRH1:
             sprintf(instruction,
-                    "ldrh %s, [%s, #%" PRIu32 "]",
+                    "ldrh %s, %s, #%" PRIu32,
                     rt.c_str(),
                     rn.c_str(),
                     im);
@@ -2099,7 +2098,7 @@ const std::string DecodedInst::getDisassembly() const
 
         case DecodedOperation::LDRH2:
             sprintf(instruction,
-                    "ldrh %s, [%s, %s]",
+                    "ldrh %s, %s, %s",
                     rt.c_str(),
                     rn.c_str(),
                     rm.c_str());
@@ -2107,7 +2106,7 @@ const std::string DecodedInst::getDisassembly() const
 
         case DecodedOperation::LDRSB:
             sprintf(instruction,
-                    "ldrsb %s, [%s, %s]",
+                    "ldrsb %s, %s, %s",
                     rt.c_str(),
                     rn.c_str(),
                     rm.c_str());
@@ -2115,7 +2114,7 @@ const std::string DecodedInst::getDisassembly() const
 
         case DecodedOperation::LDRSH:
             sprintf(instruction,
-                    "ldrsh %s, [%s, %s]",
+                    "ldrsh %s, %s, %s",
                     rt.c_str(),
                     rn.c_str(),
                     rm.c_str());
@@ -2176,7 +2175,7 @@ const std::string DecodedInst::getDisassembly() const
         case DecodedOperation::POP:
         {
             std::stringstream temp_instrution;
-            temp_instrution << "pop {";
+            temp_instrution << "pop ";
             for (i = 0; i < REGFILE_CORE_REGS_COUNT; i++)
             {
                 if (((regList >> i) & 0x1) == 0)
@@ -2192,7 +2191,6 @@ const std::string DecodedInst::getDisassembly() const
                 }
                 temp_instrution << 'r' << i;
             }
-            temp_instrution << '}';
             sprintf(instruction, "%s", temp_instrution.str().c_str());
             break;
         }
@@ -2200,7 +2198,7 @@ const std::string DecodedInst::getDisassembly() const
         case DecodedOperation::PUSH:
         {
             std::stringstream temp_instrution;
-            temp_instrution << "push {";
+            temp_instrution << "push ";
             for (i = 0; i < REGFILE_CORE_REGS_COUNT; i++)
             {
                 if (((regList >> i) & 0x1) == 0)
@@ -2216,7 +2214,6 @@ const std::string DecodedInst::getDisassembly() const
                 }
                 temp_instrution << 'r' << i;
             }
-            temp_instrution << '}';
             sprintf(instruction, "%s", temp_instrution.str().c_str());
             break;
         }
@@ -2244,7 +2241,7 @@ const std::string DecodedInst::getDisassembly() const
         case DecodedOperation::STMIA:
         {
             std::stringstream temp_instrution;
-            temp_instrution << "stmia " << rn << "{";
+            temp_instrution << "stmia " << rn;
             for (i = 0; i < REGFILE_CORE_REGS_COUNT; i++)
             {
                 if (((regList >> i) & 0x1) == 0)
@@ -2260,14 +2257,13 @@ const std::string DecodedInst::getDisassembly() const
                 }
                 temp_instrution << 'r' << i;
             }
-            temp_instrution << '}';
             sprintf(instruction, "%s", temp_instrution.str().c_str());
             break;
         }
 
         case DecodedOperation::STR1:
             sprintf(instruction,
-                    "str %s, [%s, #%" PRIu32 "]",
+                    "str %s, %s, #%" PRIu32,
                     rt.c_str(),
                     rn.c_str(),
                     im);
@@ -2275,7 +2271,7 @@ const std::string DecodedInst::getDisassembly() const
 
         case DecodedOperation::STR2:
             sprintf(instruction,
-                    "str %s, [%s, %s]",
+                    "str %s, %s, %s",
                     rt.c_str(),
                     rn.c_str(),
                     rm.c_str());
@@ -2283,7 +2279,7 @@ const std::string DecodedInst::getDisassembly() const
 
         case DecodedOperation::STR3:
             sprintf(instruction,
-                    "str %s, [%s, #%" PRIu32 "]",
+                    "str %s, %s, #%" PRIu32,
                     rt.c_str(),
                     rn.c_str(),
                     im);
@@ -2291,7 +2287,7 @@ const std::string DecodedInst::getDisassembly() const
 
         case DecodedOperation::STRB1:
             sprintf(instruction,
-                    "strb %s, [%s, #%" PRIu32 "]",
+                    "strb %s, %s, #%" PRIu32,
                     rt.c_str(),
                     rn.c_str(),
                     im);
@@ -2299,7 +2295,7 @@ const std::string DecodedInst::getDisassembly() const
 
         case DecodedOperation::STRB2:
             sprintf(instruction,
-                    "strb %s, [%s, %s]",
+                    "strb %s, %s, %s",
                     rt.c_str(),
                     rn.c_str(),
                     rm.c_str());
@@ -2307,7 +2303,7 @@ const std::string DecodedInst::getDisassembly() const
 
         case DecodedOperation::STRH1:
             sprintf(instruction,
-                    "strh %s, [%s, #%" PRIu32 "]",
+                    "strh %s, %s, #%" PRIu32,
                     rt.c_str(),
                     rn.c_str(),
                     im);
@@ -2315,7 +2311,7 @@ const std::string DecodedInst::getDisassembly() const
 
         case DecodedOperation::STRH2:
             sprintf(instruction,
-                    "strh %s, [%s, %s]",
+                    "strh %s, %s, %s",
                     rt.c_str(),
                     rn.c_str(),
                     rm.c_str());
