@@ -559,6 +559,7 @@ int Execute::executeNextInst()
     {
         /* There is no decoded instruction, stall the pipeline */
         DEBUG_CMD(DEBUG_EXECUTE, printf("Execute: stalled, pending decode\n"));
+        Simulator_Debug::Debug::Add_Execute("Stalled, pending decode");
 
         /* Record that pipeline was stalled because unavailable inst */
         stats->addStallForDecodeCycle();

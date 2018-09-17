@@ -25,10 +25,13 @@
 
 #include "simulator/utils.h"
 
+#include "simulator/debug.h"
+
 #include <cinttypes>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
 #include <string>
 #include <unordered_map>
 
@@ -61,6 +64,8 @@ MAKE_SET_FUNCTION(MemAccessWidthWords, memAccessWidthWords, uint32_t)
     void Statistics::add##func_name(type key)              \
     {                                                      \
         const auto &iter = member.find(key);               \
+                                                           \
+        std::cout << getInstructionStr(key) << std::endl;  \
                                                            \
         if (iter == member.end())                          \
         {                                                  \

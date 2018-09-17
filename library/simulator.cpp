@@ -77,6 +77,7 @@ int Simulator::run(const std::string &programBinFile,
     do
     {
         DEBUG_CMD(DEBUG_ALL, printf("== cycle %" PRIu32 " ==\n", cycle++));
+        Simulator_Debug::Debug::Increment_Cycle_Count();
     } while (proc->simulateCycle() == 0);
 
     delete proc;
