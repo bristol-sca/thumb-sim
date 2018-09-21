@@ -30,7 +30,8 @@ option(${PROJECT_NAME}_BUILD_EXECUTABLE
 set(CMAKE_CXX_STANDARD 17) # C++17 for string_view
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(SRCS
+# Add library called that is built from the source files
+add_library(lib${PROJECT_NAME}
     fetch.cpp
 	memory.cpp
 	processor.cpp
@@ -45,11 +46,6 @@ set(SRCS
 	simulator.cpp
 )
 
-# Add library called that is built from the source files
-add_library(lib${PROJECT_NAME}
-    ${SRCS}
-)
-
 target_include_directories(lib${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include)
 
 # Removes lib prefix that is auto added, to stop it being called liblibSimulator
@@ -57,7 +53,7 @@ SET_TARGET_PROPERTIES(lib${PROJECT_NAME} PROPERTIES PREFIX "")
 
 if(${PROJECT_NAME}_BUILD_EXECUTABLE)
     # Add executable that is a command line wrapper around the library
-    add_executable(${PROJECT_NAME} simulator.cpp)
+    add_executable(${PROJECT_NAME} main.cpp)
 
     target_link_libraries(${PROJECT_NAME} lib${PROJECT_NAME})
 
