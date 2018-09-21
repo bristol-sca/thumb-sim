@@ -32,6 +32,7 @@
 #include "simulator/stats.h"
 
 #include <cstdint>
+#include <string>
 
 class Processor
 {
@@ -40,15 +41,15 @@ public:
     ~Processor();
 
     int simulateCycle();
-    int reset(char *programBinFile);
+    int reset(const std::string& programBinFile);
 
 private:
-    Statistics *stats;
-    RegFile *regFile;
-    Memory *mem;
-    Fetch *fetch;
-    Decode *decode;
-    Execute *execute;
+    Statistics* stats;
+    RegFile* regFile;
+    Memory* mem;
+    Fetch* fetch;
+    Decode* decode;
+    Execute* execute;
 };
 
 #endif /* _PROCESSOR_H_ */
