@@ -2024,17 +2024,11 @@ const std::string DecodedInst::getDisassembly() const
             for (i = 0; i < REGFILE_CORE_REGS_COUNT; i++)
             {
                 if (((regList >> i) & 0x1) == 0)
+                {
                     continue;
+                }
 
-                if (comma)
-                {
-                    temp_instrution << ", ";
-                }
-                else
-                {
-                    comma = true;
-                }
-                temp_instrution << 'r' << i;
+                temp_instrution << ", r" << i;
             }
             sprintf(instruction, "%s", temp_instrution.str().c_str());
             break;
