@@ -142,7 +142,7 @@ Reg RegFile::getActiveSp()
 
 void RegFile::print()
 {
-    printf("RegFile: Register file contents\n");
+    DEBUG_CMD(DEBUG_REGFILE, printf("RegFile: Register file contents\n");)
     print(Reg::R0);
     print(Reg::R1);
     print(Reg::R2);
@@ -235,12 +235,14 @@ std::string RegFile::regToStr(Reg reg)
 
 void RegFile::print(Reg reg)
 {
-    std::string prefix = "    ";
-    uint32_t r = static_cast<uint32_t>(reg);
+    DEBUG_CMD(DEBUG_REGFILE,
+              printf("%s%-7s:0x%08" PRIX32 "\n",
+                     "    ",
+                     regToStr(reg).c_str(),
+                     regs[r]);)
 
-    printf("%s%-7s:0x%08" PRIX32 "\n",
-           prefix.c_str(),
-           regToStr(reg).c_str(),
-           regs[r]);
-    Simulator_Debug::Debug::Add_Register(regToStr(reg), regs[r]);
+    // TODO: This cast can be avoided by storing it as it's default enum type.
+    // TODO: regToStr can be avoided by storing it as it's default enum type.
+    Simulator_Debug::Debug::Add_Register(regToStr(reg),
+                                         regs[static_cast<uint32_t>(reg)]);
 }
