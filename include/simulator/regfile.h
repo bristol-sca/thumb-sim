@@ -61,9 +61,9 @@ enum class Reg
     R10 = 10,
     R11 = 11,
     R12 = 12,
-    MSP = 13,
-    LR = 14,
-    PC = 15,
+    MSP = 13, // r13
+    LR = 14, // r14
+    PC = 15, // r15
     PSP = 16,
     XPSR = 17,
     CONTROL = 18,
@@ -89,7 +89,7 @@ public:
 
     void print();
     void print(Reg reg);
-    static std::string regToStr(Reg reg);
+    static const std::string regToStr(const Reg &reg);
 
     static Reg uint32ToReg(uint32_t reg);
 

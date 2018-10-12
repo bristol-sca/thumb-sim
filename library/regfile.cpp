@@ -164,7 +164,7 @@ void RegFile::print()
     print(Reg::CONTROL);
 }
 
-std::string RegFile::regToStr(Reg reg)
+const std::string RegFile::regToStr(const Reg &reg)
 {
     switch (reg)
     {
@@ -208,13 +208,13 @@ std::string RegFile::regToStr(Reg reg)
             return "r12";
 
         case Reg::MSP:
-            return "msp";
+            return "r13";
 
         case Reg::LR:
-            return "lr";
+            return "r14";
 
         case Reg::PC:
-            return "pc";
+            return "r15";
 
         case Reg::PSP:
             return "psp";
