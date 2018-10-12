@@ -239,7 +239,7 @@ void RegFile::print(Reg reg)
               printf("%s%-7s:0x%08" PRIX32 "\n",
                      "    ",
                      regToStr(reg).c_str(),
-                     regs[r]);)
+                     regs[static_cast<uint32_t>(reg)]);)
 
     // TODO: This cast can be avoided by storing it as it's default enum type.
     // TODO: regToStr can be avoided by storing it as it's default enum type.
