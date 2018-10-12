@@ -1884,7 +1884,6 @@ const std::string DecodedInst::getDisassembly() const
         regsNumber[static_cast<uint32_t>(DecodedInstRegIndex::RN)]);
     std::string xpsr = RegFile::regToStr(
         regsNumber[static_cast<uint32_t>(DecodedInstRegIndex::XPSR)]);
-    bool comma = false;
 
     char instruction[100];
 
@@ -2169,21 +2168,15 @@ const std::string DecodedInst::getDisassembly() const
         case DecodedOperation::POP:
         {
             std::stringstream temp_instrution;
-            temp_instrution << "pop ";
+            temp_instrution << "pop " << rn;
             for (i = 0; i < REGFILE_CORE_REGS_COUNT; i++)
             {
                 if (((regList >> i) & 0x1) == 0)
+                {
                     continue;
+                }
 
-                if (comma)
-                {
-                    temp_instrution << ", ";
-                }
-                else
-                {
-                    comma = true;
-                }
-                temp_instrution << 'r' << i;
+                temp_instrution << ", r" << i;
             }
             sprintf(instruction, "%s", temp_instrution.str().c_str());
             break;
@@ -2192,21 +2185,15 @@ const std::string DecodedInst::getDisassembly() const
         case DecodedOperation::PUSH:
         {
             std::stringstream temp_instrution;
-            temp_instrution << "push ";
+            temp_instrution << "push " << rn;
             for (i = 0; i < REGFILE_CORE_REGS_COUNT; i++)
             {
                 if (((regList >> i) & 0x1) == 0)
+                {
                     continue;
+                }
 
-                if (comma)
-                {
-                    temp_instrution << ", ";
-                }
-                else
-                {
-                    comma = true;
-                }
-                temp_instrution << 'r' << i;
+                temp_instrution << ", r" << i;
             }
             sprintf(instruction, "%s", temp_instrution.str().c_str());
             break;
@@ -2239,17 +2226,11 @@ const std::string DecodedInst::getDisassembly() const
             for (i = 0; i < REGFILE_CORE_REGS_COUNT; i++)
             {
                 if (((regList >> i) & 0x1) == 0)
+                {
                     continue;
+                }
 
-                if (comma)
-                {
-                    temp_instrution << ", ";
-                }
-                else
-                {
-                    comma = true;
-                }
-                temp_instrution << 'r' << i;
+                temp_instrution << ", r" << i;
             }
             sprintf(instruction, "%s", temp_instrution.str().c_str());
             break;
