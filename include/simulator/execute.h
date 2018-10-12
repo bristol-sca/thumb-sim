@@ -167,7 +167,7 @@ private:
     int sxth(Reg rd, uint32_t drm);
 
     /* Miscellaneous instructions */
-    int bkpt(uint32_t im);
+    int bkpt();
     int svc(uint32_t im);
     int cps(uint32_t drm);
 

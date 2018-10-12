@@ -865,14 +865,12 @@ int Execute::executeNextInst()
 
         /* Other instructions */
         case DecodedOperation::BKPT:
-            bkpt(im);
+            bkpt();
             return -1; // Exit the program
-            break;
 
         case DecodedOperation::SVC:
             svc(im);
             return -1; // Exit the program
-            break;
 
         case DecodedOperation::CPS:
             cps(drm);

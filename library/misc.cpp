@@ -30,15 +30,15 @@
 #include <cstdio>
 #include <cstdlib>
 
-int Execute::bkpt(uint32_t im)
+int Execute::bkpt()
 {
     delete decodedInst;
     decodedInst = NULL;
 
     DEBUG_CMD(DEBUG_MEMORY, mem->dump());
 
-    stats->print();
-    printf("Hit breakpoint with value %" PRIu32 ". Terminating...\n", im);
+    DEBUG_CMD(DEBUG_MEMORY, stats->print();
+              printf("Hit breakpoint. Terminating...\n");)
     return 0;
 }
 
