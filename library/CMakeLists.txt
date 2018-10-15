@@ -27,8 +27,6 @@ option(${PROJECT_NAME}_BUILD_EXECUTABLE
     ON
 )
 
-set(CMAKE_CXX_STANDARD 17) # C++17 for string_view
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Add library called that is built from the source files
 add_library(lib${PROJECT_NAME}
@@ -47,6 +45,8 @@ add_library(lib${PROJECT_NAME}
 )
 
 target_include_directories(lib${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include)
+# C++17 for string_view
+target_compile_features(lib${PROJECT_NAME} PRIVATE cxx_std_17)
 
 # Removes lib prefix that is auto added, to stop it being called liblibSimulator
 SET_TARGET_PROPERTIES(lib${PROJECT_NAME} PROPERTIES PREFIX "")
