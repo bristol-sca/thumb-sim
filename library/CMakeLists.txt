@@ -27,26 +27,49 @@ option(${PROJECT_NAME}_BUILD_EXECUTABLE
     ON
 )
 
+# An option exposed to provide a user settable cache value
+# with project name prefix.
+set(${PROJECT_NAME}_DEFAULT_MEMORY_SIZE
+    "0x4000" CACHE STRING
+    "The default amount of memory that will be used for the simulation \
+    in hexidecimal bytes. This can be overriden via the simulator constructor.")
+
+# A local version of the user settable value, without the project prefix.
+# This is used to configure files so that the values can persist even if the
+# project name changes or this code is included elsewhere.
+set(DEFAULT_MEMORY_SIZE
+   ${${PROJECT_NAME}_DEFAULT_MEMORY_SIZE})
+
+# Configure a header file to pass some of the CMake settings to the source code
+configure_file(
+    "${PROJECT_SOURCE_DIR}/include/simulator/config.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/simulator/config.h"
+    @ONLY
+)
 
 # Add library called that is built from the source files
 add_library(lib${PROJECT_NAME}
     fetch.cpp
-	memory.cpp
-	processor.cpp
-	regfile.cpp
-	decode.cpp
-	execute.cpp
-	alu.cpp
-	lsu.cpp
-	branch.cpp
-	misc.cpp
-	stats.cpp
-	simulator.cpp
+    memory.cpp
+    processor.cpp
+    regfile.cpp
+    decode.cpp
+    execute.cpp
+    alu.cpp
+    lsu.cpp
+    branch.cpp
+    misc.cpp
+    stats.cpp
+    simulator.cpp
 )
 
-target_include_directories(lib${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include)
 # C++17 for string_view
 target_compile_features(lib${PROJECT_NAME} PRIVATE cxx_std_17)
+
+target_include_directories(lib${PROJECT_NAME}
+    PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_BINARY_DIR}/include)
 
 # Removes lib prefix that is auto added, to stop it being called liblibSimulator
 SET_TARGET_PROPERTIES(lib${PROJECT_NAME} PROPERTIES PREFIX "")
@@ -57,5 +80,9 @@ if(${PROJECT_NAME}_BUILD_EXECUTABLE)
 
     target_link_libraries(${PROJECT_NAME} lib${PROJECT_NAME})
 
-    target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include)
+    target_include_directories(${PROJECT_NAME}
+        PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_BINARY_DIR}/include)
+
 endif(${PROJECT_NAME}_BUILD_EXECUTABLE)
