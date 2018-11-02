@@ -69,7 +69,7 @@ enum class Reg
     PSP = 16,
     XPSR = 17,
     CONTROL = 18,
-    RNONE,
+    RNONE
 };
 
 class RegFile
