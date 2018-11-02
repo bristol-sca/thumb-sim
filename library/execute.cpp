@@ -426,14 +426,14 @@ void Execute::calculateExecCycles()
     }
 }
 
-int Execute::run()
+int Execute::run(Thumb_Simulator::Debug *cycle_recorder)
 {
     curExecState = execState;
 
     switch (execState)
     {
         case ExecuteState::NEXT_INST:
-            if (-1 == executeNextInst()) // if hit breakpoint
+            if (-1 == executeNextInst(cycle_recorder)) // if hit breakpoint
             {
                 return -1; // Exit the program
             }
@@ -483,10 +483,10 @@ int Execute::run()
     // If an instruction takes multiple cycles, currently we only
     // duplicate the previous instruction as this is all the ELMO model does.
     // TODO: Improve this?
-    if (const auto &execute = Simulator_Debug::Debug::Get_Execute();
-        execute.size() < Simulator_Debug::Debug::Get_Cycle_Count())
+    if (const auto &execute = cycle_recorder->Get_Execute();
+        execute.size() < cycle_recorder->Get_Cycle_Count())
     {
-        Simulator_Debug::Debug::Add_Execute(execute.back());
+        cycle_recorder->Add_Execute(execute.back());
     }
     calculateExecCycles();
 
@@ -537,7 +537,7 @@ std::string Execute::execStateToStr(ExecuteState state)
     }
 }
 
-int Execute::executeNextInst()
+int Execute::executeNextInst(Thumb_Simulator::Debug *cycle_recorder)
 {
     Reg rd, rt, rdn, rm, rn;
     uint32_t drt, drdn, drm, drn, dxpsr;
@@ -559,7 +559,7 @@ int Execute::executeNextInst()
     {
         /* There is no decoded instruction, stall the pipeline */
         DEBUG_CMD(DEBUG_EXECUTE, printf("Execute: stalled, pending decode\n"));
-        Simulator_Debug::Debug::Add_Execute("Stalled, pending decode");
+        cycle_recorder->Add_Execute("Stalled, pending decode");
 
         /* Record that pipeline was stalled because unavailable inst */
         stats->addStallForDecodeCycle();
@@ -593,7 +593,7 @@ int Execute::executeNextInst()
     cflag = RegFile::getXpsrC(dxpsr);
 
     DEBUG_CMD(DEBUG_EXECUTE, printf("Execute:"));
-    Simulator_Debug::Debug::Add_Execute(decodedInst->getDisassembly());
+    cycle_recorder->Add_Execute(decodedInst->getDisassembly());
 
     /* Execute the decoded instruction */
     switch (decodedInst->getOperation())

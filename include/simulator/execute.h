@@ -24,14 +24,15 @@
 #ifndef _EXECUTE_H_
 #define _EXECUTE_H_
 
+#include <list>
+
 #include "simulator/decode.h"
 #include "simulator/fetch.h"
 #include "simulator/memory.h"
 #include "simulator/regfile.h"
+#include "simulator/simulator.h"
 #include "simulator/stats.h"
 #include "simulator/utils.h"
-
-#include <list>
 
 enum class ExecuteState
 {
@@ -65,7 +66,7 @@ public:
             Memory *memIn,
             Statistics *statsIn);
     void flushPipeline();
-    int run();
+    int run(Thumb_Simulator::Debug *cycle_recorder);
 
     bool isStalled();
 
@@ -74,7 +75,7 @@ public:
 private:
     /* Execution state machine functions */
     /* Execute next decoded instruction */
-    int executeNextInst();
+    int executeNextInst(Thumb_Simulator::Debug *cycle_recorder);
     /* Single memory load */
     int executeLoadMemReq();
     int executeLoadMemResp();

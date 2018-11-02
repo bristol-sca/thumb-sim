@@ -24,6 +24,7 @@
 #ifndef _FETCH_H_
 #define _FETCH_H_
 
+#include "simulator/debug.h"
 #include "simulator/memory.h"
 #include "simulator/regfile.h"
 #include "simulator/stats.h"
@@ -40,7 +41,7 @@ public:
     void flush();
     int getNextInst(uint16_t &inst);
 
-    int run();
+    int run(Thumb_Simulator::Debug *cycle_recorder);
 
     void setExecute(Execute *executeIn);
 

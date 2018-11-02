@@ -24,12 +24,13 @@
 #ifndef _DECODE_H_
 #define _DECODE_H_
 
-#include "simulator/fetch.h"
-#include "simulator/regfile.h"
-
 #include <cstdio>
 #include <cstdlib>
 #include <string>
+
+#include "simulator/debug.h"
+#include "simulator/fetch.h"
+#include "simulator/regfile.h"
 
 enum class DecodedOperation
 {
@@ -175,7 +176,7 @@ class Decode
 public:
     Decode(Fetch *fetchInit, RegFile *regFileInit);
     DecodedInst *getNextInst();
-    int run();
+    int run(Thumb_Simulator::Debug *cycle_recorder);
     void flush();
 
 private:

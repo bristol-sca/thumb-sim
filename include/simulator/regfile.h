@@ -27,6 +27,8 @@
 #include <cstdint>
 #include <string>
 
+#include "simulator/debug.h"
+
 #define REGFILE_SIZE 19
 #define REGFILE_LOW_REGS_COUNT 8
 #define REGFILE_HIGH_REGS_COUNT 8
@@ -87,8 +89,8 @@ public:
 
     Reg getActiveSp();
 
-    void print();
-    void print(Reg reg);
+    void print(Thumb_Simulator::Debug *cycle_recorder);
+    void print(Reg reg, Thumb_Simulator::Debug *cycle_recorder);
     static const std::string regToStr(const Reg &reg);
 
     static Reg uint32ToReg(uint32_t reg);

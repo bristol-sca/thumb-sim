@@ -24,6 +24,7 @@
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
 
+#include <cstdint>
 #include <map>
 #include <string>
 #include <utility>
@@ -48,49 +49,55 @@
 #define DEBUG_CMD(flags, x)
 #endif /* DEBUG_ENABLED */
 
-#endif /* _DEBUG_H_ */
-namespace Simulator_Debug
+namespace Thumb_Simulator
 {
 class Debug
 {
 private:
     // This has been deleted to ensure the constructor and the copy
     // constructor cannot be called as this is just a utility class
-    // containing nothing but static functions.
-    Debug(const Debug &) = delete;
+    // containing nothing but functions.
+    // Debug(const Debug &) = delete;
+
+    // TODO: size_t is unsigned, -1 is
+    // negative. TODO: Check this is still right
+    // -1 as first cycle will then be cycle 0 after first increment
+    std::size_t m_cycle_count{ 0 };
+    std::vector<std::pair<std::uint16_t, std::uint16_t>> m_fetch;
+    std::vector<std::string> m_decode;
+    std::vector<std::string> m_execute;
+    std::map<std::size_t, std::map<std::string, std::size_t>> m_registers;
 
 public:
-    static size_t &Get_Cycle_Count()
+    const std::size_t &Get_Cycle_Count() const
     {
-        // -1 as first cycle will then be cycle 0 after first increment
-        static size_t cycle_count = -1;
-        return cycle_count;
+        return m_cycle_count;
     }
 
-    static void Increment_Cycle_Count()
+    void Increment_Cycle_Count()
     {
-        Get_Cycle_Count()++;
+        m_cycle_count++;
     }
 
-    static void Add_Fetch(const size_t p_fetch_first,
-                          const size_t p_fetch_second)
+    void Add_Fetch(const std::size_t p_fetch_first,
+                   const std::size_t p_fetch_second)
     {
-        Get_Fetch().push_back(std::make_pair(p_fetch_first, p_fetch_second));
+        m_fetch.push_back(std::make_pair(p_fetch_first, p_fetch_second));
     }
 
-    static void Add_Decode(const std::string &p_decode)
+    void Add_Decode(const std::string &p_decode)
     {
-        Get_Decode().push_back(p_decode);
+        m_decode.push_back(p_decode);
     }
 
     // All load and stores block the next cycle in ARM M0 - This should be
     // accounted for.
-    static void Add_Execute(const std::string &p_execute)
+    void Add_Execute(const std::string &p_execute)
     {
-        Get_Execute().push_back(p_execute);
+        m_execute.push_back(p_execute);
     }
 
-    static void Add_Register(const std::string &p_name, const size_t p_value)
+    void Add_Register(const std::string &p_name, const std::size_t p_value)
     {
         // Only store the changed registers
         // TODO: This is cheaper on memory but is it needed? What is the
@@ -102,31 +109,31 @@ public:
          *        Get_Registers()[Get_Cycle_Count() - 1].find(p_name) &&
          *    p_value != Get_Registers()[Get_Cycle_Count() - 1][p_name])
          */
-        Get_Registers()[Get_Cycle_Count()][p_name] = p_value;
+        m_registers[Get_Cycle_Count()][p_name] = p_value;
     }
 
-    static std::vector<std::pair<uint16_t, uint16_t>> &Get_Fetch()
+    const std::vector<std::pair<std::uint16_t, std::uint16_t>> &Get_Fetch()
+        const
     {
-        static std::vector<std::pair<uint16_t, uint16_t>> m_fetch;
         return m_fetch;
     }
 
-    static std::vector<std::string> &Get_Decode()
+    const std::vector<std::string> &Get_Decode() const
     {
-        static std::vector<std::string> m_decode;
         return m_decode;
     }
 
-    static std::vector<std::string> &Get_Execute()
+    const std::vector<std::string> &Get_Execute() const
     {
-        static std::vector<std::string> m_execute;
         return m_execute;
     }
 
-    static std::map<size_t, std::map<std::string, size_t>> &Get_Registers()
+    const std::map<std::size_t, std::map<std::string, std::size_t>>
+        &Get_Registers() const
     {
-        static std::map<size_t, std::map<std::string, size_t>> m_registers;
         return m_registers;
     }
 };
-} // namespace Simulator_Debug
+} // namespace Thumb_Simulator
+
+#endif /* _DEBUG_H_ */

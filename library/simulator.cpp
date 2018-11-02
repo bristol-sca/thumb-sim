@@ -23,11 +23,11 @@
  */
 #include "simulator/simulator.h"
 
+#include <cstdio>
+
 #include "simulator/config.h"
 #include "simulator/debug.h"
 #include "simulator/processor.h"
-
-#include <cstdio>
 
 int Simulator::run(const std::string &programBinFile)
 {
@@ -39,8 +39,9 @@ int Simulator::run(const std::string &programBinFile,
                    uint32_t memAccessWidthWordsIn)
 {
     int ret;
-    uint32_t cycle = 0;
+    uint32_t cycle = 0; // TODO: Combine with debug.h cycle counter
 
+    // TODO: Why is this a pointer?
     proc = new Processor(memSizeWordsIn, memAccessWidthWordsIn);
 
     /* Avoid compiler warnings when not debugging */
@@ -55,8 +56,8 @@ int Simulator::run(const std::string &programBinFile,
     do
     {
         DEBUG_CMD(DEBUG_ALL, printf("== cycle %u ==\n", cycle++));
-        Simulator_Debug::Debug::Increment_Cycle_Count();
-    } while (proc->simulateCycle() == 0);
+        cycle_recorder.Increment_Cycle_Count();
+    } while (proc->simulateCycle(&cycle_recorder) == 0);
 
     delete proc;
 

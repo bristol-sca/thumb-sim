@@ -23,6 +23,10 @@
  */
 #include "simulator/processor.h"
 
+#include <cinttypes>
+#include <cstdint>
+#include <cstdio>
+
 #include "simulator/debug.h"
 #include "simulator/decode.h"
 #include "simulator/execute.h"
@@ -31,10 +35,6 @@
 #include "simulator/regfile.h"
 #include "simulator/stats.h"
 #include "simulator/utils.h"
-
-#include <cinttypes>
-#include <cstdint>
-#include <cstdio>
 
 Processor::Processor(uint32_t memSizeWordsIn, uint32_t memAccessWidthWordsIn)
 {
@@ -60,22 +60,22 @@ Processor::~Processor()
     delete execute;
 }
 
-int Processor::simulateCycle()
+int Processor::simulateCycle(Thumb_Simulator::Debug *cycle_recorder)
 {
     stats->addCycle();
 
-    if (-1 == execute->run()) // if hit breakpoint
+    if (-1 == execute->run(cycle_recorder)) // if hit breakpoint
     {
         return -1;
     }
 
-    decode->run();
-    fetch->run();
+    decode->run(cycle_recorder);
+    fetch->run(cycle_recorder);
 
     mem->run();
 
-    DEBUG_CMD(DEBUG_REGFILE, regFile->print());
-    regFile->print();
+    DEBUG_CMD(DEBUG_REGFILE, regFile->print(cycle_recorder));
+    regFile->print(cycle_recorder);
 
     return 0;
 }
@@ -115,7 +115,7 @@ int Processor::reset(const std::string &programBinFile)
 
     /*
      * Give fetch a pointer to the execute stage so that it can work out when
-     * the pipeline is not stalled and avoid unecessary memory requests
+     * the pipeline is not stalled and avoid unnecessary memory requests
      */
     fetch->setExecute(execute);
 

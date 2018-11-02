@@ -24,6 +24,7 @@
 #ifndef _PROCESSOR_H_
 #define _PROCESSOR_H_
 
+#include "simulator/debug.h"
 #include "simulator/decode.h"
 #include "simulator/execute.h"
 #include "simulator/fetch.h"
@@ -40,16 +41,16 @@ public:
     Processor(uint32_t memSizeWordsIn, uint32_t memAccessWidthWordsIn);
     ~Processor();
 
-    int simulateCycle();
-    int reset(const std::string& programBinFile);
+    int simulateCycle(Thumb_Simulator::Debug *cycle_recorder);
+    int reset(const std::string &programBinFile);
 
 private:
-    Statistics* stats;
-    RegFile* regFile;
-    Memory* mem;
-    Fetch* fetch;
-    Decode* decode;
-    Execute* execute;
+    Statistics *stats;
+    RegFile *regFile;
+    Memory *mem;
+    Fetch *fetch;
+    Decode *decode;
+    Execute *execute;
 };
 
 #endif /* _PROCESSOR_H_ */

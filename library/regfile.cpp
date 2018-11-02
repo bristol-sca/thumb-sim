@@ -23,9 +23,8 @@
  */
 #include "simulator/regfile.h"
 
-#include "simulator/utils.h"
-
 #include "simulator/debug.h"
+#include "simulator/utils.h"
 
 #include <cinttypes>
 #include <cstdint>
@@ -140,28 +139,28 @@ Reg RegFile::getActiveSp()
     }
 }
 
-void RegFile::print()
+void RegFile::print(Thumb_Simulator::Debug *cycle_recorder)
 {
     DEBUG_CMD(DEBUG_REGFILE, printf("RegFile: Register file contents\n");)
-    print(Reg::R0);
-    print(Reg::R1);
-    print(Reg::R2);
-    print(Reg::R3);
-    print(Reg::R4);
-    print(Reg::R5);
-    print(Reg::R6);
-    print(Reg::R7);
-    print(Reg::R8);
-    print(Reg::R9);
-    print(Reg::R10);
-    print(Reg::R11);
-    print(Reg::R12);
-    print(Reg::MSP);
-    print(Reg::PSP);
-    print(Reg::LR);
-    print(Reg::PC);
-    print(Reg::XPSR);
-    print(Reg::CONTROL);
+    print(Reg::R0, cycle_recorder);
+    print(Reg::R1, cycle_recorder);
+    print(Reg::R2, cycle_recorder);
+    print(Reg::R3, cycle_recorder);
+    print(Reg::R4, cycle_recorder);
+    print(Reg::R5, cycle_recorder);
+    print(Reg::R6, cycle_recorder);
+    print(Reg::R7, cycle_recorder);
+    print(Reg::R8, cycle_recorder);
+    print(Reg::R9, cycle_recorder);
+    print(Reg::R10, cycle_recorder);
+    print(Reg::R11, cycle_recorder);
+    print(Reg::R12, cycle_recorder);
+    print(Reg::MSP, cycle_recorder);
+    print(Reg::PSP, cycle_recorder);
+    print(Reg::LR, cycle_recorder);
+    print(Reg::PC, cycle_recorder);
+    print(Reg::XPSR, cycle_recorder);
+    print(Reg::CONTROL, cycle_recorder);
 }
 
 const std::string RegFile::regToStr(const Reg &reg)
@@ -233,7 +232,7 @@ const std::string RegFile::regToStr(const Reg &reg)
     }
 }
 
-void RegFile::print(Reg reg)
+void RegFile::print(Reg reg, Thumb_Simulator::Debug *cycle_recorder)
 {
     DEBUG_CMD(DEBUG_REGFILE,
               printf("%s%-7s:0x%08" PRIX32 "\n",
@@ -243,6 +242,6 @@ void RegFile::print(Reg reg)
 
     // TODO: This cast can be avoided by storing it as it's default enum type.
     // TODO: regToStr can be avoided by storing it as it's default enum type.
-    Simulator_Debug::Debug::Add_Register(regToStr(reg),
-                                         regs[static_cast<uint32_t>(reg)]);
+    cycle_recorder->Add_Register(regToStr(reg),
+                                 regs[static_cast<uint32_t>(reg)]);
 }

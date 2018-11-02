@@ -21,17 +21,18 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-#include "simulator/decode.h"
-
-#include "simulator/debug.h"
-#include "simulator/utils.h"
-
 #include <cinttypes>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <sstream>
 #include <string>
+
+#include "simulator/decode.h"
+
+#include "simulator/debug.h"
+#include "simulator/simulator.h"
+#include "simulator/utils.h"
 
 Decode::Decode(Fetch *fetchInit, RegFile *regFileInit) :
     fetch(fetchInit),
@@ -108,7 +109,7 @@ void Decode::issuePlaceholderInst()
     decodedInst->setImmediate(66);
 }
 
-int Decode::run()
+int Decode::run(Thumb_Simulator::Debug *cycle_recorder)
 {
     uint16_t inst;
     uint32_t rd, rdn, rm, rn, rl, rt;
@@ -163,7 +164,7 @@ int Decode::run()
         flushPending = false;
 
         DEBUG_CMD(DEBUG_DECODE, printf("Decode: flushing\n"));
-        Simulator_Debug::Debug::Add_Decode("Flushing");
+        cycle_recorder->Add_Decode("Flushing");
 
         return 0;
     }
@@ -175,7 +176,7 @@ int Decode::run()
         /* The previously decoded instruction has not been processed yet */
         DEBUG_CMD(DEBUG_DECODE,
                   printf("Decode: stalled, pending execution\n"));
-        Simulator_Debug::Debug::Add_Decode("Stalled, pending execution");
+        cycle_recorder->Add_Decode("Stalled, pending execution");
 
         return 0;
     }
@@ -188,7 +189,7 @@ int Decode::run()
     {
         /* Stall as fetch could not provide the following instruction */
         DEBUG_CMD(DEBUG_DECODE, printf("Decode: stalled, pending fetch\n"));
-        Simulator_Debug::Debug::Add_Decode("Stalled, pending fetch");
+        cycle_recorder->Add_Decode("Stalled, pending fetch");
 
         return 0;
     }
@@ -227,7 +228,7 @@ int Decode::run()
 
             const std::string disassembly = decodedInst->getDisassembly();
             DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-            Simulator_Debug::Debug::Add_Decode(disassembly);
+            cycle_recorder->Add_Decode(disassembly);
             return 0;
         }
 
@@ -239,7 +240,7 @@ int Decode::run()
                          ", issuing: ",
                          inst);
                   printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
 
         return 0;
     }
@@ -263,7 +264,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -283,7 +284,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -301,7 +302,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -322,7 +323,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -347,7 +348,7 @@ int Decode::run()
                              "(0x%04" PRIX16 "), issuing: ",
                              inst);
                       printf("%s\n", disassembly.c_str()));
-            Simulator_Debug::Debug::Add_Decode(disassembly);
+            cycle_recorder->Add_Decode(disassembly);
 
             return 0;
         }
@@ -363,7 +364,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -380,7 +381,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -399,7 +400,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -417,7 +418,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -436,7 +437,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -456,7 +457,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -475,7 +476,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -497,7 +498,7 @@ int Decode::run()
                        "), issuing: ",
                        inst);
                 printf("%s\n", disassembly.c_str()));
-            Simulator_Debug::Debug::Add_Decode(disassembly);
+            cycle_recorder->Add_Decode(disassembly);
 
             return 0;
         }
@@ -514,7 +515,7 @@ int Decode::run()
 
             const std::string disassembly = decodedInst->getDisassembly();
             DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-            Simulator_Debug::Debug::Add_Decode(disassembly);
+            cycle_recorder->Add_Decode(disassembly);
             return 0;
         }
 
@@ -532,7 +533,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -551,7 +552,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -565,7 +566,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -587,7 +588,7 @@ int Decode::run()
         // TODO: This used to read "bl first half" but original ELMO leakage
         // model simply duplicates instructions that take more than one cycle.
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -608,7 +609,7 @@ int Decode::run()
                        "), issuing: ",
                        inst);
                 printf("%s\n", disassembly.c_str()));
-            Simulator_Debug::Debug::Add_Decode(disassembly);
+            cycle_recorder->Add_Decode(disassembly);
 
             return 0;
         }
@@ -621,7 +622,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -639,7 +640,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -658,7 +659,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -676,7 +677,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -695,7 +696,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -717,7 +718,7 @@ int Decode::run()
                              "registers (0x%04" PRIX16 "), issuing: ",
                              inst);
                       printf("%s\n", disassembly.c_str()));
-            Simulator_Debug::Debug::Add_Decode(disassembly);
+            cycle_recorder->Add_Decode(disassembly);
 
             return 0;
         }
@@ -733,7 +734,7 @@ int Decode::run()
                              "(0x%04" PRIX16 "), issuing: ",
                              inst);
                       printf("%s\n", disassembly.c_str()));
-            Simulator_Debug::Debug::Add_Decode(disassembly);
+            cycle_recorder->Add_Decode(disassembly);
 
             return 0;
         }
@@ -747,7 +748,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -764,7 +765,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -784,7 +785,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -803,7 +804,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -824,7 +825,7 @@ int Decode::run()
                              "(0x%04" PRIX16 "), issuing: ",
                              inst);
                       printf("%s\n", disassembly.c_str()));
-            Simulator_Debug::Debug::Add_Decode(disassembly);
+            cycle_recorder->Add_Decode(disassembly);
 
             return 0;
         }
@@ -837,7 +838,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -857,7 +858,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -878,7 +879,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -895,7 +896,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -914,7 +915,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -934,7 +935,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -955,7 +956,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -975,7 +976,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -996,7 +997,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1017,7 +1018,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1038,7 +1039,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1058,7 +1059,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1077,7 +1078,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1097,7 +1098,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1116,7 +1117,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1132,7 +1133,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1150,7 +1151,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1169,7 +1170,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1187,7 +1188,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1208,7 +1209,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1219,7 +1220,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1238,7 +1239,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1259,7 +1260,7 @@ int Decode::run()
                              "(0x%04" PRIX16 "), issuing: ",
                              inst);
                       printf("%s\n", disassembly.c_str()));
-            Simulator_Debug::Debug::Add_Decode(disassembly);
+            cycle_recorder->Add_Decode(disassembly);
 
             return 0;
         }
@@ -1272,7 +1273,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1293,7 +1294,7 @@ int Decode::run()
                              "(0x%04" PRIX16 "), issuing: ",
                              inst);
                       printf("%s\n", disassembly.c_str()));
-            Simulator_Debug::Debug::Add_Decode(disassembly);
+            cycle_recorder->Add_Decode(disassembly);
 
             return 0;
         }
@@ -1306,7 +1307,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1324,7 +1325,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1342,7 +1343,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1360,7 +1361,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1379,7 +1380,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1400,7 +1401,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1428,7 +1429,7 @@ int Decode::run()
                              "(0x%04" PRIX16 "), issuing: ",
                              inst);
                       printf("%s\n", disassembly.c_str()));
-            Simulator_Debug::Debug::Add_Decode(disassembly);
+            cycle_recorder->Add_Decode(disassembly);
 
             return 0;
         }
@@ -1441,7 +1442,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1462,7 +1463,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1484,7 +1485,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1504,7 +1505,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1525,7 +1526,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1547,7 +1548,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1568,7 +1569,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1590,7 +1591,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1610,7 +1611,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1628,7 +1629,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1649,7 +1650,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1666,7 +1667,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1680,7 +1681,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1698,7 +1699,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1716,7 +1717,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1735,7 +1736,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1753,7 +1754,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1771,7 +1772,7 @@ int Decode::run()
 
         const std::string disassembly = decodedInst->getDisassembly();
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
-        Simulator_Debug::Debug::Add_Decode(disassembly);
+        cycle_recorder->Add_Decode(disassembly);
         return 0;
     }
 
@@ -1782,7 +1783,7 @@ int Decode::run()
         DEBUG_DECODE,
         printf("Unable to decode instruction %04" PRIX16 ", issuing: ", inst);
         printf("%s\n", disassembly.c_str()));
-    Simulator_Debug::Debug::Add_Decode(disassembly);
+    cycle_recorder->Add_Decode(disassembly);
 
     return 0;
 }

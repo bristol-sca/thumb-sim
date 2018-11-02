@@ -24,9 +24,13 @@
 #ifndef _SIMULATOR_H_
 #define _SIMULATOR_H_
 
-#include "simulator/processor.h"
+// Forward Declaration
+class Processor;
 
 #include <cstdint>
+#include <string>
+
+#include "simulator/debug.h"
 
 class Simulator
 {
@@ -35,8 +39,13 @@ public:
     int run(const std::string &programBinFile,
             uint32_t memSizeWordsIn,
             uint32_t memAccessWidthWordsIn);
+    const Thumb_Simulator::Debug &Get_Cycle_Recorder()
+    {
+        return cycle_recorder;
+    }
 
 private:
+    Thumb_Simulator::Debug cycle_recorder;
     Processor *proc;
 };
 
