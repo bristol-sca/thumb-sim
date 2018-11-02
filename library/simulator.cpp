@@ -39,13 +39,9 @@ int Simulator::run(const std::string &programBinFile,
                    uint32_t memAccessWidthWordsIn)
 {
     int ret;
-    uint32_t cycle = 0; // TODO: Combine with debug.h cycle counter
 
     // TODO: Why is this a pointer?
     proc = new Processor(memSizeWordsIn, memAccessWidthWordsIn);
-
-    /* Avoid compiler warnings when not debugging */
-    (void)cycle;
 
     if ((ret = proc->reset(programBinFile)) != 0)
     {
@@ -55,9 +51,18 @@ int Simulator::run(const std::string &programBinFile,
 
     do
     {
-        DEBUG_CMD(DEBUG_ALL, printf("== cycle %u ==\n", cycle++));
+        DEBUG_CMD(
+            DEBUG_ALL,
+            printf("== cycle %lu ==\n", cycle_recorder.Get_Cycle_Count()));
+
+        // Continue until simulateCycle() returns something other than 0
+        if (proc->simulateCycle(&cycle_recorder) != 0)
+        {
+            break;
+        }
+
         cycle_recorder.Increment_Cycle_Count();
-    } while (proc->simulateCycle(&cycle_recorder) == 0);
+    } while (true);
 
     delete proc;
 
