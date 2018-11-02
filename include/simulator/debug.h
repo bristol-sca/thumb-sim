@@ -66,7 +66,7 @@ private:
     std::vector<std::pair<std::uint16_t, std::uint16_t>> m_fetch;
     std::vector<std::string> m_decode;
     std::vector<std::string> m_execute;
-    std::map<std::size_t, std::map<std::string, std::size_t>> m_registers;
+    std::vector<std::map<std::string, std::size_t>> m_registers;
 
 public:
     const std::size_t &Get_Cycle_Count() const
@@ -99,17 +99,17 @@ public:
 
     void Add_Register(const std::string &p_name, const std::size_t p_value)
     {
-        // Only store the changed registers
-        // TODO: This is cheaper on memory but is it needed? What is the
-        // difference? Registers can only be accessed by iterating through
-        // them all
-        // TODO: Also this if statement doesn't work
-        /*
-         *if (Get_Registers()[Get_Cycle_Count() - 1].end() !=
-         *        Get_Registers()[Get_Cycle_Count() - 1].find(p_name) &&
-         *    p_value != Get_Registers()[Get_Cycle_Count() - 1][p_name])
-         */
-        m_registers[Get_Cycle_Count()][p_name] = p_value;
+        // If this is the first register to be recorded for this cycle, add a
+        // new map for the cycle.
+        if (m_registers.size() == m_cycle_count)
+        {
+            m_registers.push_back(
+                std::map<std::string, std::size_t>{ { p_name, p_value } });
+        }
+        else
+        {
+            m_registers[m_cycle_count][p_name] = p_value;
+        }
     }
 
     const std::vector<std::pair<std::uint16_t, std::uint16_t>> &Get_Fetch()
@@ -127,9 +127,8 @@ public:
     {
         return m_execute;
     }
-
-    const std::map<std::size_t, std::map<std::string, std::size_t>>
-        &Get_Registers() const
+    const std::vector<std::map<std::string, std::size_t>> &Get_Registers()
+        const
     {
         return m_registers;
     }
