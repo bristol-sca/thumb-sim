@@ -70,7 +70,6 @@ DecodedInst *Decode::getNextInst()
 void Decode::updateDecodedInstReg(DecodedInstRegIndex regIndex)
 {
     Reg reg;
-    uint32_t data;
 
     reg = decodedInst->getRegisterNumber(regIndex);
     if (reg == Reg::MSP || reg == Reg::PSP)
@@ -80,6 +79,7 @@ void Decode::updateDecodedInstReg(DecodedInstRegIndex regIndex)
 
     if (reg != Reg::RNONE && reg != Reg::PC)
     {
+        uint32_t data;
         regFile->read(reg, data);
         decodedInst->setRegister(regIndex, reg, data);
     }
