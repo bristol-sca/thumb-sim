@@ -146,16 +146,18 @@ public:
     bool isDecoded(void);
     void setOperation(DecodedOperation opIn);
     DecodedOperation getOperation();
-    void setImmediate(uint32_t imIn);
-    uint32_t getImmediate();
+    void setImmediate(std::uint32_t imIn);
+    std::uint32_t getImmediate();
     void clear();
-    void setRegister(DecodedInstRegIndex index, uint32_t reg, uint32_t data);
-    void setRegister(DecodedInstRegIndex index, Reg reg, uint32_t data);
-    uint32_t getRegisterData(DecodedInstRegIndex index);
+    void setRegister(DecodedInstRegIndex index,
+                     std::uint32_t reg,
+                     std::uint32_t data);
+    void setRegister(DecodedInstRegIndex index, Reg reg, std::uint32_t data);
+    std::uint32_t getRegisterData(DecodedInstRegIndex index);
     Reg getRegisterNumber(DecodedInstRegIndex index);
-    void setRegisterList(uint32_t regListIn);
-    uint32_t getRegisterList();
-    void setCondition(uint32_t cond);
+    void setRegisterList(std::uint32_t regListIn);
+    std::uint32_t getRegisterList();
+    void setCondition(std::uint32_t cond);
     DecodedCondition getCondition();
     const std::string getDisassembly() const;
 
@@ -165,9 +167,9 @@ private:
     bool pending{ false };
     DecodedOperation op{ DecodedOperation::NOP };
     Reg regsNumber[REGFILE_LOW_REGS_COUNT]{ Reg::RNONE };
-    uint32_t regsData[REGFILE_LOW_REGS_COUNT];
-    uint32_t im;
-    uint32_t regList;
+    std::uint32_t regsData[REGFILE_LOW_REGS_COUNT];
+    std::uint32_t im;
+    std::uint32_t regList;
     DecodedCondition cond;
 };
 
@@ -181,7 +183,7 @@ public:
 
 private:
     void issuePlaceholderInst();
-    uint32_t getCorrectedFetchAddress();
+    std::uint32_t getCorrectedFetchAddress();
     void updateDecodedInstReg(DecodedInstRegIndex regIndex);
     void updateDecodedInstRegs();
 
