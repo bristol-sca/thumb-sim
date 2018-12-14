@@ -74,7 +74,6 @@ int Processor::simulateCycle(Thumb_Simulator::Debug *cycle_recorder)
 
     mem->run();
 
-    DEBUG_CMD(DEBUG_REGFILE, regFile->print(cycle_recorder));
     regFile->print(cycle_recorder);
 
     return 0;
