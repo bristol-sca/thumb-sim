@@ -869,8 +869,12 @@ int Execute::executeNextInst(Thumb_Simulator::Debug *cycle_recorder)
             return -1; // Exit the program
 
         case DecodedOperation::SVC:
-            svc(im);
-            return -1; // Exit the program
+            // Exit if this is not a trigger point.
+            if (-1 == svc(im, cycle_recorder))
+            {
+                return -1;
+            }
+            break;
 
         case DecodedOperation::CPS:
             cps(drm);

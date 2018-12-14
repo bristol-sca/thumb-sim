@@ -169,7 +169,7 @@ private:
 
     /* Miscellaneous instructions */
     int bkpt();
-    int svc(uint32_t im);
+    int svc(uint32_t im, Thumb_Simulator::Debug *cycle_recorder);
     int cps(uint32_t drm);
 
     /* Conditional flags handling */
