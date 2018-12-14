@@ -68,6 +68,8 @@ private:
     std::vector<std::string> m_execute;
     std::vector<std::map<std::string, std::size_t>> m_registers;
 
+    bool m_recording = false;
+
 public:
     const std::size_t &Get_Cycle_Count() const
     {
@@ -76,29 +78,45 @@ public:
 
     void Increment_Cycle_Count()
     {
-        m_cycle_count++;
+        if (m_recording)
+        {
+            m_cycle_count++;
+        }
     }
 
     void Add_Fetch(const std::size_t p_fetch_first,
                    const std::size_t p_fetch_second)
     {
-        m_fetch.push_back(std::make_pair(p_fetch_first, p_fetch_second));
+        if (m_recording)
+        {
+            m_fetch.push_back(std::make_pair(p_fetch_first, p_fetch_second));
+        }
     }
 
     void Add_Decode(const std::string &p_decode)
     {
-        m_decode.push_back(p_decode);
+        if (m_recording)
+        {
+            m_decode.push_back(p_decode);
+        }
     }
 
     // All load and stores block the next cycle in ARM M0 - This should be
     // accounted for.
     void Add_Execute(const std::string &p_execute)
     {
-        m_execute.push_back(p_execute);
+        if (m_recording)
+        {
+            m_execute.push_back(p_execute);
+        }
     }
 
     void Add_Register(const std::string &p_name, const std::size_t p_value)
     {
+        if (!m_recording)
+        {
+            return;
+        }
         // If this is the first register to be recorded for this cycle, add a
         // new map for the cycle.
         if (m_registers.size() == m_cycle_count)
@@ -131,6 +149,16 @@ public:
         const
     {
         return m_registers;
+    }
+
+    void Start_Trigger()
+    {
+        m_recording = true;
+    }
+
+    void Stop_Trigger()
+    {
+        m_recording = false;
     }
 };
 } // namespace Thumb_Simulator

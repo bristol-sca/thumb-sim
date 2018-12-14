@@ -55,6 +55,18 @@ int Execute::nop()
 
 int Execute::svc(uint32_t im, Thumb_Simulator::Debug* cycle_recorder)
 {
+    if (0 == im)  // Stop trigger
+    {
+        cycle_recorder->Stop_Trigger();
+        // fprintf(stderr, "Reached SVC (im %" PRIu32 ") instruction\n", im);
+        return 0;
+    }
+    if (1 == im)  // Start trigger
+    {
+        cycle_recorder->Start_Trigger();
+        // fprintf(stderr, "Reached SVC (im %" PRIu32 ") instruction\n", im);
+        return 0;
+    }
     if (2 == im)  // Get random data and write it to R0
                   // TODO: Probably shouldn't use R0 for this...
     {
