@@ -10,13 +10,30 @@ The simulator implements most instructions in Thumb (**NOT** Thumb-2) with the e
 
 I use this tool as part of my research in hard real-time hardware garbage collection, so I only add features to the simulator as I need them. I have developed this tool to be easily extensible (to suit the future needs of my project), so there are places in the code with unfinished features or without clear purpose. Also, I have taken shortcuts where possible, for example by not freeing memory when an error occurs or when the simulation terminates.
 
-# Dependencies
+# Getting Started
 
-There are no dependencies on anything other than the compiler, GNU Make and a libc. To build, simply type:
+CMake is required.
 
+1) Create an empty build directory.
+
+2) From the build directory run this command:
 ```
-make
+cmake /path/to/source/directory/
 ```
+This will generate native build files for your platform. A specific generator
+can be specified using the`-G *generator*` flag. A
+[list of generators is available here.]
+(https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html)
+
+
+3) Run this command to compile the code.
+```
+cmake --build .
+```
+This will compile the program using
+your chosen generator e.g. make. Alternatively the native build system can be
+used manually from this point on.
+
 
 # Running a Program
 
@@ -27,8 +44,9 @@ make -C example
 ./simulator -b example/example.bin
 ```
 
-# Notes
+# License - MIT (Expat)
 
-**I am sharing it for anyone who wants to use it for whatever purpose. However, there are no guarantees that the simulator is bug free and there are no warranties with this software, so use it at your own risk.**
+This project is licensed under the MIT (Expat) License - see the [LICENSE](LICENSE) file for details.
 
-Please let me know if you find any bugs (by raising an issue or emailing me), such as inaccuracies in the timing of an operation.
+All contributions are welcome.
+Please let me know if you find any bugs, especially inaccuracies in the timing of an operation.
