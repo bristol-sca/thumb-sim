@@ -26,12 +26,17 @@
 #include "simulator/debug.h"
 #include "simulator/utils.h"
 
+// TODO: Move random number generation to it's own class and file.
 #include <cinttypes>
+#include <climits> // for UINT_MAX
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
+#include <random> // for uniform_int_distribution, mt19937 TODO: Remove this
+#include <sstream>
 #include <string>
 
 Memory::Memory(uint32_t memSizeWordsIn,
@@ -237,7 +242,7 @@ int Memory::retrieveWideLoad(uint32_t token, uint32_t *data)
     }
 }
 
-int Memory::run()
+int Memory::run(Thumb_Simulator::Debug *cycle_recorder)
 {
     uint32_t wordBaseAddr;
     uint32_t nextRespIndex = nextReqIndex;
@@ -256,7 +261,10 @@ int Memory::run()
         DEBUG_CMD(DEBUG_MEMORY, printf("No requests pending\n"));
         return 0;
     }
-    else if (GET_WORD_INDEX(pipeline[nextRespIndex].byteAddr) >= memSizeWords)
+    // If this is out of bounds and not the address used to pass data
+    // to the simulator.
+    if (const auto address = pipeline[nextRespIndex].byteAddr;
+        GET_WORD_INDEX(address) >= memSizeWords && 0xfffff000 > address)
     {
         fprintf(stderr,
                 "%s:%s:%d: Out-of-bounds memory access to byteAddr "
@@ -277,19 +285,59 @@ int Memory::run()
         case MemoryAccessType::LOAD:
             wordBaseAddr = getMemAccessWidthBaseByteAddr(
                 pipeline[nextRespIndex].byteAddr);
+            DEBUG_CMD(DEBUG_MEMORY, printf("Serving LOAD\n"));
+
+            // If loading from 0xfffff100 then load a pseudo random number.
+            if (0xfffff100 <= pipeline[nextRespIndex].byteAddr)
+            {
+                static std::mt19937 m_random_number_generator(
+                    std::random_device{}());
+
+                static std::uniform_int_distribution<uint32_t> distribution(
+                    0, std::numeric_limits<uint32_t>::max());
+
+                const auto random_number =
+                    distribution(m_random_number_generator);
+
+                const auto random_bytes = static_cast<const char *>(
+                    static_cast<const void *>(&random_number));
+
+                std::copy(random_bytes,
+                          random_bytes + sizeof(uint32_t),
+                          pipeline[nextRespIndex].respData);
+                break;
+            }
+
             wordBaseAddr = GET_WORD_INDEX(wordBaseAddr);
             memcpy(pipeline[nextRespIndex].respData,
                    mem + wordBaseAddr,
                    memAccessWidthWords * sizeof(uint32_t));
-            DEBUG_CMD(DEBUG_MEMORY, printf("Serving LOAD\n"));
             break;
 
         case MemoryAccessType::STORE:
-            mem[GET_WORD_INDEX(pipeline[nextRespIndex].byteAddr)] =
-                pipeline[nextRespIndex].reqData[0];
+        {
             DEBUG_CMD(DEBUG_MEMORY, printf("Serving STORE\n"));
-            break;
 
+            const auto address = pipeline[nextRespIndex].byteAddr;
+
+            if (0xfffff000 <= address)
+            {
+                // if this is the address indicating that this is extra
+                // data for the simulator to store.
+                if (0xfffff000 == address)
+                {
+                    std::stringstream hex_byte;
+                    hex_byte << std::hex << std::setfill('0') << std::setw(2)
+                             << pipeline[nextRespIndex].reqData[0];
+                    cycle_recorder->Add_Extra_Data(hex_byte.str());
+                    break; // This is not a normal memory requested that needs
+                           // to be served.
+                }
+            }
+
+            mem[GET_WORD_INDEX(address)] = pipeline[nextRespIndex].reqData[0];
+            break;
+        }
         default:
             fprintf(stderr, "Invalid memory access request type\n");
             exit(1);
@@ -403,6 +451,12 @@ std::string Memory::memAccessTypeToStr(MemoryAccessType type)
 
 void Memory::loadWord(uint32_t byteAddr, uint32_t &data)
 {
+    // This is the "add extra data" address
+    if (byteAddr >= 0xfffff000)
+    {
+        return;
+    }
+
     if (GET_WORD_INDEX(byteAddr) >= memSizeWords)
     {
         fprintf(stderr,

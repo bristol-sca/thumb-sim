@@ -53,31 +53,19 @@ int Execute::nop()
     return 0;
 }
 
-int Execute::svc(uint32_t im, Thumb_Simulator::Debug* cycle_recorder)
+int Execute::svc(uint32_t im, Thumb_Simulator::Debug *cycle_recorder)
 {
-    if (0 == im)  // Stop trigger
+    if (0 == im) // Stop trigger
     {
         cycle_recorder->Stop_Trigger();
         // fprintf(stderr, "Reached SVC (im %" PRIu32 ") instruction\n", im);
-        return 0;
+        return 0; // Continue running.
     }
-    if (1 == im)  // Start trigger
+    if (1 == im) // Start trigger
     {
         cycle_recorder->Start_Trigger();
         // fprintf(stderr, "Reached SVC (im %" PRIu32 ") instruction\n", im);
-        return 0;
-    }
-    if (2 == im)  // Get random data and write it to R0
-                  // TODO: Probably shouldn't use R0 for this...
-    {
-        srand(time(nullptr));
-        regFile->write(Reg::R0, rand());  // TODO: Replace with std::random
-        return 1;                         // Continue running.
-    }
-    if (3 == im)  // Read data that has been written to "magic" address, and add
-                  // it to the traces.
-    {
-        return 1;  // Continue running.
+        return 0; // Continue running.
     }
 
     delete decodedInst;
@@ -85,7 +73,7 @@ int Execute::svc(uint32_t im, Thumb_Simulator::Debug* cycle_recorder)
 
     fprintf(stderr, "Reached SVC (im %" PRIu32 ") instruction\n", im);
     DEBUG_CMD(DEBUG_MEMORY, mem->dump());
-    return -1;  // Exit the program
+    return -1; // Exit the program
 }
 
 /* Repurpose this instruction for printing a character in register r0 */
