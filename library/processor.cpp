@@ -72,7 +72,7 @@ int Processor::simulateCycle(Thumb_Simulator::Debug *cycle_recorder)
     decode->run(cycle_recorder);
     fetch->run(cycle_recorder);
 
-    mem->run();
+    mem->run(cycle_recorder);
 
     regFile->print(cycle_recorder);
 

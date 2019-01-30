@@ -39,6 +39,8 @@
 
 #define DEBUG_MASK (0xFFFFFFFF)
 
+//#define DEBUG_ENABLED true
+
 #if defined(DEBUG_ENABLED)
 #define DEBUG_CMD(flags, x)            \
     if (((flags) & (DEBUG_MASK)) != 0) \
@@ -67,6 +69,8 @@ private:
     std::vector<std::string> m_decode;
     std::vector<std::string> m_execute;
     std::vector<std::map<std::string, std::size_t>> m_registers;
+    std::string m_extra_data; // Extra cryptographic data that is not traces
+                              // that needs to be stored.
 
     bool m_recording = false;
 
@@ -130,6 +134,11 @@ public:
         }
     }
 
+    void Add_Extra_Data(const std::string &p_extra_data)
+    {
+        m_extra_data += p_extra_data;
+    }
+
     const std::vector<std::pair<std::uint16_t, std::uint16_t>> &Get_Fetch()
         const
     {
@@ -145,10 +154,16 @@ public:
     {
         return m_execute;
     }
+
     const std::vector<std::map<std::string, std::size_t>> &Get_Registers()
         const
     {
         return m_registers;
+    }
+
+    const std::string &Get_Extra_Data() const
+    {
+        return m_extra_data;
     }
 
     void Start_Trigger()

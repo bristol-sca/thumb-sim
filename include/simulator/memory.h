@@ -25,6 +25,7 @@
 #define _MEMORY_H_
 
 #include "simulator/config.h"
+#include "simulator/debug.h"
 #include "simulator/utils.h"
 
 #include <string>
@@ -86,7 +87,7 @@ public:
 
     bool isAvailable();
 
-    int run();
+    int run(Thumb_Simulator::Debug *cycle_recorder);
 
     uint32_t getMemAccessWidthWordIndex(uint32_t byteAddr)
     {
