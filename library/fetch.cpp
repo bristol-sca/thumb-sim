@@ -43,7 +43,7 @@ Fetch::Fetch(Memory *memIn, RegFile *regFileIn, Statistics *statsIn) :
 
 Fetch::~Fetch()
 {
-    delete instBuffer;
+    delete[] instBuffer;
 }
 
 void Fetch::flush()

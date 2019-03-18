@@ -81,15 +81,15 @@ Memory::~Memory()
 {
     uint32_t i;
 
-    delete mem;
+    delete[] mem;
 
     for (i = 0; i < pipelineSize; i++)
     {
-        delete pipeline[i].reqData;
-        delete pipeline[i].reqEnable;
-        delete pipeline[i].respData;
+        delete[] pipeline[i].reqData;
+        delete[] pipeline[i].reqEnable;
+        delete[] pipeline[i].respData;
     }
-    delete pipeline;
+    delete[] pipeline;
 }
 
 int Memory::loadProgram(const std::string &programFile,
