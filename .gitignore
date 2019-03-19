@@ -3,3 +3,4 @@
 *.d
 simulator
 !simulator/
+include/simulator/config.h

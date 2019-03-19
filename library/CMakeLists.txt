@@ -43,7 +43,8 @@ set(DEFAULT_MEMORY_SIZE
 # Configure a header file to pass some of the CMake settings to the source code
 configure_file(
     "${PROJECT_SOURCE_DIR}/include/simulator/config.h.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/include/simulator/config.h"
+    "${PROJECT_SOURCE_DIR}/include/simulator/config.h"
+    #"${CMAKE_CURRENT_BINARY_DIR}/include/simulator/config.h"
     @ONLY
 )
 
