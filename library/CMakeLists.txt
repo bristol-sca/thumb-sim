@@ -30,7 +30,7 @@ option(${PROJECT_NAME}_BUILD_EXECUTABLE
 # An option exposed to provide a user settable cache value
 # with project name prefix.
 set(${PROJECT_NAME}_DEFAULT_MEMORY_SIZE
-    "0x4000" CACHE STRING
+    "0xA00000" CACHE STRING
     "The default amount of memory that will be used for the simulation \
     in hexidecimal bytes. This can be overriden via the simulator constructor.")
 
