@@ -37,8 +37,7 @@ set(${PROJECT_NAME}_DEFAULT_MEMORY_SIZE
 # A local version of the user settable value, without the project prefix.
 # This is used to configure files so that the values can persist even if the
 # project name changes or this code is included elsewhere.
-set(DEFAULT_MEMORY_SIZE
-   ${${PROJECT_NAME}_DEFAULT_MEMORY_SIZE})
+set(DEFAULT_MEMORY_SIZE ${${PROJECT_NAME}_DEFAULT_MEMORY_SIZE})
 
 # Configure a header file to pass some of the CMake settings to the source code
 configure_file(
@@ -49,7 +48,7 @@ configure_file(
 )
 
 # Add library called that is built from the source files
-add_library(lib${PROJECT_NAME}
+add_library(lib${PROJECT_NAME} SHARED
     fetch.cpp
     memory.cpp
     processor.cpp
@@ -65,15 +64,20 @@ add_library(lib${PROJECT_NAME}
 )
 
 # C++17 for string_view
-target_compile_features(lib${PROJECT_NAME} PRIVATE cxx_std_17)
+target_compile_features(lib${PROJECT_NAME} PUBLIC cxx_std_17)
 
 target_include_directories(lib${PROJECT_NAME}
-    PRIVATE
-    ${PROJECT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_BINARY_DIR}/include)
+    PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/library>
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+)
 
-# Removes lib prefix that is auto added, to stop it being called liblibSimulator
-SET_TARGET_PROPERTIES(lib${PROJECT_NAME} PROPERTIES PREFIX "")
+set_target_properties(lib${PROJECT_NAME}
+    PROPERTIES
+        # Removes automatic lib prefix, to stop it being called liblibSimulator
+        PREFIX ""
+)
 
 if(${PROJECT_NAME}_BUILD_EXECUTABLE)
     # Add executable that is a command line wrapper around the library
@@ -82,8 +86,7 @@ if(${PROJECT_NAME}_BUILD_EXECUTABLE)
     target_link_libraries(${PROJECT_NAME} lib${PROJECT_NAME})
 
     target_include_directories(${PROJECT_NAME}
-        PRIVATE
+        PUBLIC
         ${PROJECT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_BINARY_DIR}/include)
-
-endif(${PROJECT_NAME}_BUILD_EXECUTABLE)
+endif()
