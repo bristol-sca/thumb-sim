@@ -60,6 +60,13 @@ Processor::~Processor()
     delete execute;
 }
 
+void Processor::injectFault(const Reg register_name,
+                            const std::uint16_t bit_to_flip)
+{
+    regFile->write(register_name,
+                   regFile->readData(register_name) ^ 1UL << bit_to_flip);
+}
+
 int Processor::simulateCycle(Thumb_Simulator::Debug *cycle_recorder)
 {
     stats->addCycle();

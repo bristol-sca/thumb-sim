@@ -29,6 +29,15 @@
 #include "simulator/debug.h"
 #include "simulator/processor.h"
 
+void Simulator::injectFault(const std::uint32_t cycle_number,
+                            const Reg register_name,
+                            const std::uint16_t bit_to_flip)
+{
+    cycle_to_fault_before = cycle_number;
+    register_to_fault = register_name;
+    bit_to_fault = bit_to_flip;
+}
+
 int Simulator::run(const std::string &programBinFile)
 {
     return run(programBinFile, MEM_SIZE_WORDS, MEM_ACCESS_WIDTH_WORDS);
@@ -54,6 +63,13 @@ int Simulator::run(const std::string &programBinFile,
         DEBUG_CMD(
             DEBUG_ALL,
             printf("== cycle %lu ==\n", cycle_recorder.Get_Cycle_Count()));
+
+        // + 1 to ensure the fault happens before the cycle.
+        if (cycle_recorder.Get_Cycle_Count() + 1 == cycle_to_fault_before)
+        {
+            // Perform the fault injection.
+            proc->injectFault(register_to_fault, bit_to_fault);
+        }
 
         // Continue until simulateCycle() returns something other than 0
         if (proc->simulateCycle(&cycle_recorder) != 0)

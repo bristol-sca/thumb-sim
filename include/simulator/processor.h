@@ -44,6 +44,11 @@ public:
     int simulateCycle(Thumb_Simulator::Debug *cycle_recorder);
     int reset(const std::string &programBinFile);
 
+    // Flips a bit in a register.
+    // Specifically if flips the bit given by bit_to_flip in the register given
+    // by register_name.
+    void injectFault(const Reg register_name, const std::uint16_t bit_to_flip);
+
 private:
     Statistics *stats;
     RegFile *regFile;

@@ -30,6 +30,8 @@ class Processor;
 #include <cstdint>
 #include <string>
 
+#include "simulator/regfile.h"
+
 #include "simulator/debug.h"
 
 class Simulator
@@ -44,9 +46,19 @@ public:
         return cycle_recorder;
     }
 
+    // Faults are injected before the cycle given by cycle_number is executed.
+    void injectFault(const std::uint32_t cycle_number,
+                     const Reg register_name,
+                     const std::uint16_t bit_to_flip);
+
 private:
     Thumb_Simulator::Debug cycle_recorder;
     Processor *proc;
+
+    // These 3 are only for purposes of fault injection.
+    Reg register_to_fault;
+    std::uint32_t cycle_to_fault_before;
+    std::uint16_t bit_to_fault;
 };
 
 #endif /* _SIMULATOR_H_ */
