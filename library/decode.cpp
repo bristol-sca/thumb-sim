@@ -1214,7 +1214,12 @@ int Decode::run(Thumb_Simulator::Debug *cycle_recorder)
     }
 
     /* A6.7.87 NOP Encoding T1 */
-    if ((inst & 0xFFFF) == 0xBF00)
+    if ((inst & 0xFFFF) == 0xBF00 ||
+        /* A6.7.112 SEV Encoding T1 */
+        // SEV is an optional hint instruction.
+        // "If it is not implemented, it executes as a NOP."
+        // http://www.keil.com/support/man/docs/armasm/armasm_dom1361289895451.htm
+        (inst & 0xFFFF) == 0xBF40)
     {
         decodedInst->setOperation(DecodedOperation::NOP);
 
@@ -1403,13 +1408,6 @@ int Decode::run(Thumb_Simulator::Debug *cycle_recorder)
         DEBUG_CMD(DEBUG_DECODE, printf("%s\n", disassembly.c_str()));
         cycle_recorder->Add_Decode(disassembly);
         return 0;
-    }
-
-    /* A6.7.112 SEV Encoding T1 */
-    if ((inst & 0xFFFF) == 0xBF40)
-    {
-        fprintf(stderr, "Unsupported instruction SEV\n");
-        exit(1);
     }
 
     /* A6.7.117 STMIA Encoding T1 */
