@@ -29,6 +29,7 @@
 #include "simulator/utils.h"
 
 #include <string>
+#include <vector>
 
 enum class Component
 {
@@ -123,7 +124,7 @@ public:
     static std::string memAccessTypeToStr(MemoryAccessType type);
 
 private:
-    uint32_t *mem{ nullptr };
+    std::vector<uint32_t> mem;
     uint32_t memSizeWords;
     uint32_t memAccessWidthWords;
 

@@ -41,7 +41,8 @@
 
 Memory::Memory(uint32_t memSizeWordsIn,
                uint32_t memAccessWidthWordsIn,
-               uint32_t pipelineSizeIn)
+               uint32_t pipelineSizeIn) :
+    mem(memSizeWordsIn)
 {
     uint32_t i;
 
@@ -51,12 +52,6 @@ Memory::Memory(uint32_t memSizeWordsIn,
     {
         memSizeWords = memSizeWords + memAccessWidthWords -
             (memSizeWordsIn % memAccessWidthWords);
-    }
-    mem = new uint32_t[memSizeWords];
-
-    for (i = 0; i < memSizeWords; i++)
-    {
-        mem[i] = 0;
     }
 
     /* The +1 is to not clear served responses early */
@@ -80,8 +75,6 @@ Memory::Memory(uint32_t memSizeWordsIn,
 Memory::~Memory()
 {
     uint32_t i;
-
-    delete[] mem;
 
     for (i = 0; i < pipelineSize; i++)
     {
@@ -119,7 +112,9 @@ int Memory::loadProgram(const std::string &programFile,
 
     /* Allocate space for the program binary */
     inBin.seekg(0, std::ios::beg);
-    inBin.read(reinterpret_cast<char *>(mem + GET_WORD_INDEX(addr)), binSize);
+    inBin.read(reinterpret_cast<char *>(mem.data() + GET_WORD_INDEX(addr)),
+               binSize);
+
     if (binSize != inBin.gcount())
     {
         fprintf(stderr, "Failed to read full program binary\n");
@@ -309,9 +304,10 @@ int Memory::run(Thumb_Simulator::Debug *cycle_recorder)
             }
 
             wordBaseAddr = GET_WORD_INDEX(wordBaseAddr);
-            memcpy(pipeline[nextRespIndex].respData,
-                   mem + wordBaseAddr,
-                   memAccessWidthWords * sizeof(uint32_t));
+            std::copy(&mem[wordBaseAddr],
+                      &mem[wordBaseAddr] +
+                          memAccessWidthWords * sizeof(uint32_t),
+                      pipeline[nextRespIndex].respData);
             break;
 
         case MemoryAccessType::STORE:
