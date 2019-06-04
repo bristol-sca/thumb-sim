@@ -58,6 +58,9 @@ int Simulator::run(const std::string &programBinFile,
         return ret;
     }
 
+    // This is different from cycle_recorder.Get_Cycle_count()
+    // as that only contains recorded cycles.
+    std::uint32_t cycles_passed{ 0 };
     do
     {
         DEBUG_CMD(
@@ -65,7 +68,7 @@ int Simulator::run(const std::string &programBinFile,
             printf("== cycle %lu ==\n", cycle_recorder.Get_Cycle_Count()));
 
         // + 1 to ensure the fault happens before the cycle.
-        if (cycle_recorder.Get_Cycle_Count() + 1 == cycle_to_fault_before)
+        if (cycle_to_fault_before == cycles_passed + 1)
         {
             // Perform the fault injection.
             proc->injectFault(register_to_fault, bit_to_fault);
