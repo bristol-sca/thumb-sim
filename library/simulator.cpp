@@ -81,6 +81,14 @@ int Simulator::run(const std::string &programBinFile,
         }
 
         cycle_recorder.Increment_Cycle_Count();
+        cycles_passed++;
+        if (500000 == cycles_passed)
+        {
+            fprintf(stderr,
+                    "Timeout reached before program excecution finished."
+                    " Exiting.\n");
+            break;
+        }
     } while (true);
 
     delete proc;
