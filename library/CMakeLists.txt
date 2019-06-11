@@ -48,7 +48,7 @@ configure_file(
 )
 
 # Add library called that is built from the source files
-add_library(lib${PROJECT_NAME} SHARED
+add_library(lib${PROJECT_NAME}
     fetch.cpp
     memory.cpp
     processor.cpp
@@ -71,6 +71,11 @@ target_include_directories(lib${PROJECT_NAME}
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/library>
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+)
+
+target_compile_options(lib${PROJECT_NAME}
+    PUBLIC
+        -fPIC
 )
 
 set_target_properties(lib${PROJECT_NAME}
