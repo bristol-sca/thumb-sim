@@ -55,7 +55,8 @@ private:
     Thumb_Simulator::Debug cycle_recorder;
     Processor *proc;
 
-    // These 3 are only for purposes of fault injection.
+    // These are only for purposes of fault injection.
+    bool fault{ false };
     Reg register_to_fault;
     std::uint32_t cycle_to_fault_before;
     std::uint16_t bit_to_fault;
