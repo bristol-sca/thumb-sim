@@ -88,15 +88,6 @@ int Fetch::getNextInst(uint16_t &inst)
     {
         return -1;
     }
-    else if (mem->getMemAccessWidthBaseByteAddr(pc) != instBufferBaseAddr)
-    {
-        fprintf(stderr,
-                "Unpredictable state: instruction buffer (0x%08" PRIX32
-                ") is valid and out of sync with pc (0x%08" PRIX32 ")\n",
-                instBufferBaseAddr,
-                mem->getMemAccessWidthBaseByteAddr(pc));
-        exit(1);
-    }
 
     /* Get the next instruction to decode */
     inst = instBuffer[mem->getMemAccessWidthInstOffset(pc)];
