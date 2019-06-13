@@ -79,7 +79,11 @@ int Processor::simulateCycle(Thumb_Simulator::Debug *cycle_recorder)
     decode->run(cycle_recorder);
     fetch->run(cycle_recorder);
 
-    mem->run(cycle_recorder);
+    if (-1 == mem->run(cycle_recorder)) // if an out of bound memory request happened.
+    {
+        regFile->print(cycle_recorder);
+        return -1;
+    }
 
     regFile->print(cycle_recorder);
 

@@ -231,10 +231,7 @@ int Memory::retrieveWideLoad(uint32_t token, uint32_t *data)
         }
         return 0;
     }
-    else
-    {
-        return -1;
-    }
+    return -1;
 }
 
 int Memory::run(Thumb_Simulator::Debug *cycle_recorder)
@@ -271,7 +268,7 @@ int Memory::run(Thumb_Simulator::Debug *cycle_recorder)
                 pipeline[nextRespIndex].byteAddr,
                 GET_WORD_INDEX(pipeline[nextRespIndex].byteAddr),
                 memSizeWords);
-        exit(1);
+        return -1;
     }
 
     /* Serve the pending request */
@@ -329,6 +326,21 @@ int Memory::run(Thumb_Simulator::Debug *cycle_recorder)
                     break; // This is not a normal memory requested that needs
                            // to be served.
                 }
+            }
+
+            if (GET_WORD_INDEX(address) >= mem.size())
+            {
+                fprintf(stderr,
+                        "%s:%s:%d: Out-of-bounds memory access to address "
+                        "0x%08" PRIX32 " (%" PRIu32
+                        " words) of memSizeWords %" PRIu32 "\n",
+                        __FILE__,
+                        __func__,
+                        __LINE__,
+                        address,
+                        GET_WORD_INDEX(address),
+                        memSizeWords);
+                return -1;
             }
 
             mem[GET_WORD_INDEX(address)] = pipeline[nextRespIndex].reqData[0];
