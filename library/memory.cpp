@@ -457,12 +457,12 @@ std::string Memory::memAccessTypeToStr(MemoryAccessType type)
     }
 }
 
-void Memory::loadWord(uint32_t byteAddr, uint32_t &data)
+bool Memory::loadWord(uint32_t byteAddr, uint32_t &data)
 {
     // This is the "add extra data" address
     if (byteAddr >= 0xfffff000)
     {
-        return;
+        return true; // Ignore and continue.
     }
 
     if (GET_WORD_INDEX(byteAddr) >= memSizeWords)
@@ -477,8 +477,9 @@ void Memory::loadWord(uint32_t byteAddr, uint32_t &data)
                 byteAddr,
                 GET_WORD_INDEX(byteAddr),
                 memSizeWords);
-        exit(1);
+        return false; // Critical fault: exit the program.
     }
 
     data = mem[GET_WORD_INDEX(byteAddr)];
+    return true;
 }

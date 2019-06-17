@@ -352,7 +352,10 @@ int Execute::executeStoreMemReq()
         // return 0;
     }
 
-    mem->loadWord(byteAddr, prevData);
+    if (!mem->loadWord(byteAddr, prevData)) // if loadWord failed.
+    {
+        return -1; // Exit the program.
+    }
     formatDataForMemStore(
         storeTmps.type, prevData, storeTmps.data, storeTmps.byteOffset);
 
@@ -450,7 +453,10 @@ int Execute::run(Thumb_Simulator::Debug *cycle_recorder)
 
         /* States for store */
         case ExecuteState::STORE_MEM_REQ:
-            executeStoreMemReq();
+            if (-1 == executeStoreMemReq()) // if loadWord failed
+            {
+                return -1; // Exit the program
+            }
             break;
 
         case ExecuteState::STORE_MEM_RESP:

@@ -73,7 +73,7 @@ public:
                     uint32_t &programByteSize);
 
     /* Convenience function for loading a word without interface */
-    void loadWord(uint32_t byteAddr, uint32_t &data);
+    bool loadWord(uint32_t byteAddr, uint32_t &data);
 
     /* Create a request in the memory access pipeline */
     int requestLoad(Component issuer, uint32_t byteAddr, uint32_t &token);
