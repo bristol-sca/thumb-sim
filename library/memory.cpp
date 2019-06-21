@@ -280,7 +280,7 @@ int Memory::run(Thumb_Simulator::Debug *cycle_recorder)
             DEBUG_CMD(DEBUG_MEMORY, printf("Serving LOAD\n"));
 
             // If loading from 0xfffff100 then load a pseudo random number.
-            if (0xfffff100 <= pipeline[nextRespIndex].byteAddr)
+            if (0xfffff100 == pipeline[nextRespIndex].byteAddr)
             {
                 static std::mt19937 m_random_number_generator(
                     std::random_device{}());
@@ -300,7 +300,23 @@ int Memory::run(Thumb_Simulator::Debug *cycle_recorder)
                 break;
             }
 
+            if (GET_WORD_INDEX(wordBaseAddr) >= mem.size())
+            {
+                fprintf(stderr,
+                        "%s:%s:%d: Out-of-bounds memory access to address "
+                        "0x%08" PRIX32 " (%" PRIu32
+                        " words) of memSizeWords %" PRIu32 "\n",
+                        __FILE__,
+                        __func__,
+                        __LINE__,
+                        wordBaseAddr,
+                        GET_WORD_INDEX(wordBaseAddr),
+                        memSizeWords);
+                return -1;
+            }
+
             wordBaseAddr = GET_WORD_INDEX(wordBaseAddr);
+
             std::copy(&mem[wordBaseAddr],
                       &mem[wordBaseAddr] +
                           memAccessWidthWords * sizeof(uint32_t),
