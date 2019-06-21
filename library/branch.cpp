@@ -207,7 +207,9 @@ int Execute::bx(Reg rdn, uint32_t drm)
     if ((drm & 0x1) != 0x1)
     {
         fprintf(stderr, "BX cannot branch to ARM mode\n");
-        exit(1);
+        // Exit if BX to ARM mode. This should crash as per section
+        // A6.7.15 in the architecture reference manual.
+        return -1;
     }
 
     regFile->write(rdn, drm & ~0x1);

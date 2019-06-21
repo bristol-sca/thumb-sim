@@ -699,11 +699,19 @@ int Execute::executeNextInst(Thumb_Simulator::Debug *cycle_recorder)
             break;
 
         case DecodedOperation::BX:
-            bx(rdn, drm);
+            // Exit if error occurred.
+            if (-1 == bx(rdn, drm))
+            {
+                return -1;
+            }
             break;
 
         case DecodedOperation::CPY:
-            cpy(rd, drm);
+            // Exit if error occurred.
+            if (-1 == cpy(rd, drm))
+            {
+                return -1;
+            }
             break;
 
         /* Arithmetic and logic instructions */
