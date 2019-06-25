@@ -47,9 +47,11 @@ public:
     }
 
     // Faults are injected before the cycle given by cycle_number is executed.
-    void injectFault(const std::uint32_t cycle_number,
+    void InjectFault(const std::uint32_t cycle_number,
                      const Reg register_name,
                      const std::uint16_t bit_to_flip);
+
+    void AddTimeout(const std::uint32_t number_of_cycles);
 
 private:
     Thumb_Simulator::Debug cycle_recorder;
@@ -60,6 +62,8 @@ private:
     Reg register_to_fault;
     std::uint32_t cycle_to_fault_before;
     std::uint16_t bit_to_fault;
+
+    std::optional<std::uint32_t> timeout;
 };
 
 #endif /* _SIMULATOR_H_ */

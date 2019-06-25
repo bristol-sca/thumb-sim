@@ -29,7 +29,7 @@
 #include "simulator/debug.h"
 #include "simulator/processor.h"
 
-void Simulator::injectFault(const std::uint32_t cycle_number,
+void Simulator::InjectFault(const std::uint32_t cycle_number,
                             const Reg register_name,
                             const std::uint16_t bit_to_flip)
 {
@@ -37,6 +37,11 @@ void Simulator::injectFault(const std::uint32_t cycle_number,
     cycle_to_fault_before = cycle_number;
     register_to_fault = register_name;
     bit_to_fault = bit_to_flip;
+}
+
+void Simulator::AddTimeout(const std::uint32_t number_of_cycles)
+{
+    timeout = number_of_cycles;
 }
 
 int Simulator::run(const std::string &programBinFile)
@@ -83,11 +88,14 @@ int Simulator::run(const std::string &programBinFile,
 
         cycle_recorder.Increment_Cycle_Count();
         cycles_passed++;
-        if (500000 == cycles_passed)
+
+        // If a timeout has been set, stop execution after the given number of
+        // cycles have passed.
+        if (timeout && timeout.value() == cycles_passed)
         {
             fprintf(stderr,
-                    "Timeout reached before program excecution finished."
-                    " Exiting.\n");
+                    "Timeout reached before program excecution finished. "
+                    "Exiting.\n");
             break;
         }
     } while (true);
