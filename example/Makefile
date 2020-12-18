@@ -24,7 +24,7 @@
 ARMGNU ?= arm-none-eabi
 
 # Sorce file names
-CSRCS     = main.c masked_combined.c maths.c rand.c
+CSRCS     = main.c
 ASMSRCS   = startup.asm
 LDSCRIPT  = memmap.ld
 
